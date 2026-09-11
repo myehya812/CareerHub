@@ -22,27 +22,7 @@ I am building the project to strengthen my understanding of full-stack developme
 
 The application uses **Vue 3** for the frontend, **Laravel 12** for the backend, and **MySQL** for data storage.
 
-The project focuses on practical concepts such as frontend/backend integration, REST API development, relational database design, CRUD operations, authentication, authorization, validation, search, filtering, pagination, and maintainable application structure.
-
----
-
-## 📸 Preview
-
-Screenshots will be added as the frontend develops further.
-
-<!--
-
-Later you can add:
-
-### Job Listings
-
-![CareerHub Job Listings](docs/screenshots/job-listings.png)
-
-### Job Details
-
-![CareerHub Job Details](docs/screenshots/job-details.png)
-
--->
+CareerHub focuses on practical software development concepts including REST API development, frontend/backend integration, relational database design, CRUD operations, validation, authentication, authorization, search, filtering, pagination, and maintainable application structure.
 
 ---
 
@@ -78,7 +58,7 @@ Later you can add:
 
 ## ✅ Implemented Features
 
-The application currently includes:
+CareerHub currently includes:
 
 - Browse available job listings
 - View individual job details
@@ -86,21 +66,23 @@ The application currently includes:
 - Vue frontend connected to Laravel
 - REST API communication using Axios
 - Laravel connected to MySQL
-- Job data stored in a relational database
-- Basic responsive frontend interface
+- Relational job data storage
+- Basic responsive user interface
 
 ---
 
 ## 🚧 In Progress
 
-The following features are currently being developed:
+The following functionality is currently being developed:
 
 - Complete job CRUD operations
 - Authentication and authorization
 - Search and filtering
 - Pagination
-- Improved validation
-- Improved loading and error states
+- Form validation
+- Loading states
+- Error handling
+- Improved responsive design
 
 ---
 
@@ -191,7 +173,7 @@ The Vue frontend communicates with Laravel through RESTful API endpoints.
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| `GET` | `/api/jobs` | Retrieve job listings |
+| `GET` | `/api/jobs` | Retrieve available job listings |
 | `GET` | `/api/jobs/{id}` | Retrieve a specific job |
 
 ### Planned Endpoints
@@ -202,7 +184,7 @@ The Vue frontend communicates with Laravel through RESTful API endpoints.
 | `PUT` | `/api/jobs/{id}` | Update an existing job |
 | `DELETE` | `/api/jobs/{id}` | Delete a job |
 
-More endpoints will be introduced as authentication, companies, applications, saved jobs, and user profiles are added.
+Additional endpoints will be added for authentication, companies, applications, saved jobs, and user profiles as development continues.
 
 ---
 
@@ -210,7 +192,7 @@ More endpoints will be introduced as authentication, companies, applications, sa
 
 CareerHub uses **MySQL** as its relational database.
 
-Laravel's **Eloquent ORM** is used to interact with the database.
+Laravel's **Eloquent ORM** is used to interact with the database and manage relationships between application entities.
 
 The database is being designed around entities such as:
 
@@ -228,7 +210,7 @@ Companies
       └── Applications
 ```
 
-Additional relationships will be introduced as the application develops.
+Additional tables and relationships will be introduced as the application develops.
 
 ---
 
@@ -240,14 +222,14 @@ Additional relationships will be introduced as the application develops.
 - [x] Create Laravel backend
 - [x] Configure MySQL
 - [x] Connect Laravel to MySQL
-- [x] Connect Vue to Laravel
+- [x] Connect Vue frontend to Laravel API
 - [x] Display job listings
 - [x] Display individual job details
 
 ### Phase 2 — Job Management
 
-- [ ] Complete Create Job
-- [ ] Complete Edit Job
+- [ ] Complete job creation
+- [ ] Complete job editing
 - [ ] Delete jobs
 - [ ] Backend validation
 - [ ] Frontend validation
@@ -260,7 +242,7 @@ Additional relationships will be introduced as the application develops.
 - [ ] Protected frontend routes
 - [ ] Protected API routes
 
-### Phase 4 — User Roles
+### Phase 4 — Roles & Authorization
 
 - [ ] Applicant accounts
 - [ ] Employer accounts
@@ -279,9 +261,9 @@ Additional relationships will be introduced as the application develops.
 
 ### Phase 6 — Search & User Experience
 
-- [ ] Search
-- [ ] Filtering
-- [ ] Sorting
+- [ ] Search jobs
+- [ ] Filter jobs
+- [ ] Sort jobs
 - [ ] Pagination
 - [ ] Loading states
 - [ ] Error states
@@ -289,7 +271,7 @@ Additional relationships will be introduced as the application develops.
 
 ### Phase 7 — Advanced Features
 
-- [ ] CV uploads
+- [ ] CV / résumé uploads
 - [ ] Applicant dashboard
 - [ ] Employer dashboard
 - [ ] Email notifications
@@ -300,7 +282,7 @@ Additional relationships will be introduced as the application develops.
 
 ### Requirements
 
-Make sure the following tools are installed:
+Before running CareerHub locally, make sure the following are installed:
 
 - Git
 - Node.js
@@ -334,7 +316,7 @@ Install PHP dependencies:
 composer install
 ```
 
-Create the environment file.
+Create the Laravel environment file.
 
 #### Windows PowerShell
 
@@ -348,7 +330,7 @@ Copy-Item .env.example .env
 cp .env.example .env
 ```
 
-Generate the Laravel application key:
+Generate the application key:
 
 ```bash
 php artisan key:generate
@@ -358,19 +340,19 @@ php artisan key:generate
 
 ### 3. Configure MySQL
 
-Create the CareerHub database:
+Create a database for CareerHub:
 
 ```sql
 CREATE DATABASE careerhub;
 ```
 
-Then update:
+Then open:
 
 ```text
 backend/.env
 ```
 
-Example configuration:
+Configure the database connection:
 
 ```env
 DB_CONNECTION=mysql
@@ -387,11 +369,13 @@ Use the correct MySQL username and password for your environment.
 
 ### 4. Run Database Migrations
 
+From the `backend` directory:
+
 ```bash
 php artisan migrate
 ```
 
-If seeders are available:
+If database seeders are available:
 
 ```bash
 php artisan db:seed
@@ -399,13 +383,13 @@ php artisan db:seed
 
 ---
 
-### 5. Start Laravel
+### 5. Start the Laravel Backend
 
 ```bash
 php artisan serve
 ```
 
-The backend should normally run at:
+The Laravel backend will normally run at:
 
 ```text
 http://127.0.0.1:8000
@@ -413,21 +397,23 @@ http://127.0.0.1:8000
 
 ---
 
-### 6. Frontend Setup
+### 6. Start the Vue Frontend
 
-Open another terminal and move into the frontend:
+Open another terminal.
+
+Move into the frontend directory:
 
 ```bash
 cd frontend
 ```
 
-Install dependencies:
+Install JavaScript dependencies:
 
 ```bash
 npm install
 ```
 
-Start the Vue development server:
+Start the development server:
 
 ```bash
 npm run dev
@@ -443,28 +429,35 @@ http://localhost:5173
 
 ---
 
-## 🎯 What I'm Learning
+## 📸 Screenshots
 
-CareerHub is a practical learning project focused on applying software engineering concepts through a complete full-stack application.
+Screenshots will be added once the frontend interface is more complete.
 
-While developing the project, I am gaining experience with:
+<!--
 
-- Vue component architecture
-- Vue Router
-- API communication with Axios
-- Laravel controllers and routes
-- REST API design
-- Database migrations
-- Eloquent models and relationships
-- MySQL relational database design
-- CRUD operations
-- Authentication and authorization
-- Form validation
-- Error handling
-- Git workflows
-- Organizing larger software projects
+When ready, create:
 
-The goal is not only to make the application work, but also to understand how a maintainable full-stack system is designed, developed, and improved over time.
+docs/
+└── screenshots/
+    ├── job-listings.png
+    ├── job-details.png
+    └── job-form.png
+
+Then replace this section with:
+
+### Job Listings
+
+![CareerHub Job Listings](docs/screenshots/job-listings.png)
+
+### Job Details
+
+![CareerHub Job Details](docs/screenshots/job-details.png)
+
+### Job Form
+
+![CareerHub Job Form](docs/screenshots/job-form.png)
+
+-->
 
 ---
 
@@ -472,6 +465,6 @@ The goal is not only to make the application work, but also to understand how a 
 
 🚧 **CareerHub is currently under active development.**
 
-The application is being built progressively as new full-stack development and software engineering concepts are implemented.
+The application is being built progressively as additional full-stack development and software engineering concepts are implemented.
 
-The README will continue to be updated as features are completed.
+Features, architecture, and documentation will continue to evolve as development progresses.
