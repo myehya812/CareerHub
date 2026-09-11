@@ -1,0 +1,320 @@
+<script setup>
+import router from '@/router';
+import { reactive } from 'vue';
+import { useToast } from 'vue-toastification';
+import axios from 'axios';
+
+const toast = useToast();
+
+/*
+  This object stores everything typed into the form.
+
+  Because reactive() is used, Vue automatically updates
+  these values whenever the user changes an input.
+*/
+const form = reactive({
+  title: '',
+  type: 'Full-Time',
+  location: '',
+  description: '',
+
+  // CareerHub stores salary as real numbers instead
+  // of a string like "$50K - $60K".
+  salary_min: null,
+  salary_max: null,
+
+  currency: 'USD',
+});
+
+/*
+  This function will eventually send the new job to Laravel.
+
+  IMPORTANT:
+  POST /api/jobs is not built in Laravel yet.
+  We will build that in Milestone 7 (CRUD).
+
+  The form is being prepared now so its data already matches
+  our real CareerHub database.
+*/
+const handleSubmit = async () => {
+  const newJob = {
+    // Build the exact object Laravel will eventually receive.
+    title: form.title,
+    type: form.type,
+    location: form.location,
+    description: form.description,
+    salary_min: form.salary_min,
+    salary_max: form.salary_max,
+    currency: form.currency,
+
+    // New jobs begin active by default.
+    status: 'active',
+  };
+
+  try {
+    // Send the completed form to Laravel.
+    const response = await axios.post('/api/jobs', newJob);
+
+    toast.success('Job published successfully');
+
+    // Example:
+    // Laravel creates job ID 3
+    // -> navigate to /jobs/3
+    router.push(`/jobs/${response.data.id}`);
+  } catch (error) {
+    console.error('Error creating job', error);
+
+    toast.error('The job could not be published');
+  }
+};
+</script>
+
+<template>
+  <section class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl px-6">
+
+      <!-- Page heading -->
+      <div class="mb-8">
+        <p
+          class="text-sm font-semibold uppercase tracking-wider text-indigo-600"
+        >
+          Employers
+        </p>
+
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+          Post a new opportunity
+        </h1>
+
+        <p class="mt-3 max-w-2xl text-slate-600">
+          Share the role, compensation, and location so candidates can decide
+          whether the opportunity is right for them.
+        </p>
+      </div>
+
+      <!--
+        @submit.prevent does two things:
+
+        1. Prevents the browser from refreshing the whole page.
+        2. Runs our handleSubmit() JavaScript function instead.
+      -->
+      <form
+        @submit.prevent="handleSubmit"
+        class="space-y-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
+      >
+
+        <!-- ========================= -->
+        <!-- Job Details -->
+        <!-- ========================= -->
+
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">
+            Job details
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Tell candidates what position you are hiring for.
+          </p>
+        </div>
+
+        <!-- Job title -->
+        <div>
+          <label
+            for="title"
+            class="mb-2 block text-sm font-semibold text-slate-700"
+          >
+            Job title
+          </label>
+
+          <input
+            id="title"
+            v-model="form.title"
+            type="text"
+            required
+            placeholder="e.g. Junior Frontend Developer"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          />
+        </div>
+
+        <!-- Employment type + location -->
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+
+          <div>
+            <label
+              for="type"
+              class="mb-2 block text-sm font-semibold text-slate-700"
+            >
+              Employment type
+            </label>
+
+            <select
+              id="type"
+              v-model="form.type"
+              required
+              class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            >
+              <option value="Full-Time">Full-Time</option>
+              <option value="Part-Time">Part-Time</option>
+              <option value="Internship">Internship</option>
+              <option value="Contract">Contract</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              for="location"
+              class="mb-2 block text-sm font-semibold text-slate-700"
+            >
+              Location
+            </label>
+
+            <input
+              id="location"
+              v-model="form.location"
+              type="text"
+              required
+              placeholder="e.g. Beirut, Lebanon or Remote"
+              class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label
+            for="description"
+            class="mb-2 block text-sm font-semibold text-slate-700"
+          >
+            Job description
+          </label>
+
+          <textarea
+            id="description"
+            v-model="form.description"
+            rows="6"
+            required
+            placeholder="Describe the role, responsibilities, and what you are looking for..."
+            class="w-full resize-none rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          ></textarea>
+        </div>
+
+        <!-- Separator -->
+        <div class="border-t border-slate-200"></div>
+
+        <!-- ========================= -->
+        <!-- Compensation -->
+        <!-- ========================= -->
+
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">
+            Compensation
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Add a salary range so candidates know what to expect.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+
+          <!-- Minimum salary -->
+          <div>
+            <label
+              for="salary_min"
+              class="mb-2 block text-sm font-semibold text-slate-700"
+            >
+              Minimum salary
+            </label>
+
+            <input
+              id="salary_min"
+              v-model.number="form.salary_min"
+              type="number"
+              min="0"
+              placeholder="40000"
+              class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+          <!-- Maximum salary -->
+          <div>
+            <label
+              for="salary_max"
+              class="mb-2 block text-sm font-semibold text-slate-700"
+            >
+              Maximum salary
+            </label>
+
+            <input
+              id="salary_max"
+              v-model.number="form.salary_max"
+              type="number"
+              min="0"
+              placeholder="55000"
+              class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+          <!-- Currency -->
+          <div>
+            <label
+              for="currency"
+              class="mb-2 block text-sm font-semibold text-slate-700"
+            >
+              Currency
+            </label>
+
+            <select
+              id="currency"
+              v-model="form.currency"
+              class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            >
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="LBP">LBP</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Separator -->
+        <div class="border-t border-slate-200"></div>
+
+        <!-- Information about future company system -->
+        <div class="rounded-xl bg-indigo-50 p-5">
+          <h3 class="font-semibold text-indigo-900">
+            Company profile
+          </h3>
+
+          <p class="mt-1 text-sm leading-6 text-indigo-700">
+            Company information will later be connected automatically to the
+            company account that publishes this job.
+          </p>
+        </div>
+
+        <!-- Form actions -->
+        <div
+          class="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:justify-end"
+        >
+          <!-- Cancel simply returns to the jobs page. -->
+          <button
+            type="button"
+            @click="router.push('/jobs')"
+            class="rounded-xl border border-slate-300 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Cancel
+          </button>
+
+          <!-- Submit triggers handleSubmit(). -->
+          <button
+            type="submit"
+            class="rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+          >
+            Publish Job
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </section>
+</template>
