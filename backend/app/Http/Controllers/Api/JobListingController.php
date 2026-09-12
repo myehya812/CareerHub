@@ -73,4 +73,13 @@ class JobListingController extends Controller
 
     }
 
+public function destroy(int $id){
+        $job = JobListing::findOrFail($id);
+
+        $job->delete();
+
+        return response()->noContent();
+}
+
+
 };
