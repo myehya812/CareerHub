@@ -13,3 +13,5 @@ Route::get('/jobs', [JobListingController::class, 'index']);
 Route::get('/jobs/{id}', [JobListingController::class , 'show'] );
 
 Route::post('/jobs' , [JobListingController::class , 'store']);
+
+Route::put('/jobs/{id}', [JobListingController::class , 'update']);
