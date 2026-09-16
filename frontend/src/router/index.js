@@ -6,6 +6,9 @@ import JobView from '@/views/JobView.vue';
 import AddJobView from '@/views/AddJobView.vue';
 import EditJobView from '@/views/EditJobView.vue';
 import ApiTestView from '@/views/ApiTestView.vue';
+import LoginView from '@/views/LoginView.vue';
+import RegisterView from '@/views/RegisterView.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,7 +51,62 @@ const router = createRouter({
       name: 'not-found',
       component: NotFoundView,
     },
+
+    {
+  path: '/login',
+  name: 'login',
+  component: LoginView,
+},
+
+{
+  path: '/register',
+  name: 'register',
+  component: RegisterView,
+},
+
+
+{
+  path: '/jobs/add',
+  name: 'add-job',
+  component: AddJobView,
+
+  meta: {
+    requiresAuth:true,
+    requiresRole:'company'
+  },
+},
+
+{
+  path: '/jobs/edit/:id',
+  name: 'edit-job',
+  component: EditJobView,
+
+  meta: {
+    requiresAuth:true,
+  },
+},
+
+
   ],
+});
+
+
+router.beforeEach(async (to) =>{   //("to") The route the user is trying to go to.
+  const auth = useAuthStore();
+  if(!auth.initialized){
+    await auth.fetchUser();
+  }
+  if(to.meta.requiresAuth && !auth.isAuthenticated){
+    return '/login';
+  }
+
+
+  if (
+    to.meta.requiresRole &&
+    auth.user?.role !== to.meta.requiresRole
+  ) {
+    return '/';
+  }
 });
 
 export default router;

@@ -34,7 +34,6 @@ onMounted(async () => {
   <section class="bg-slate-50 px-4 py-16">
     <div class="mx-auto max-w-7xl">
 
-      <!-- Section title -->
       <div class="mb-10 text-center">
         <p class="text-sm font-semibold uppercase tracking-wider text-indigo-600">
           Opportunities
@@ -49,10 +48,6 @@ onMounted(async () => {
         </p>
       </div>
 
-      <!--
-        While Axios is waiting for Laravel,
-        show a loading spinner instead of an empty page.
-      -->
       <div
         v-if="state.isLoading"
         class="flex justify-center py-12"
@@ -60,7 +55,6 @@ onMounted(async () => {
         <PulseLoader color="#4F46E5" />
       </div>
 
-      <!-- Display the jobs after loading is complete. -->
       <div
         v-else
         class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
@@ -72,10 +66,6 @@ onMounted(async () => {
         />
       </div>
 
-      <!--
-        This button only appears on the homepage because
-        HomeView passes showButton="true".
-      -->
       <div
         v-if="showButton"
         class="mt-10 text-center"

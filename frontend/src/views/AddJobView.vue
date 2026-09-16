@@ -6,39 +6,20 @@ import axios from 'axios';
 
 const toast = useToast();
 
-/*
-  This object stores everything typed into the form.
-
-  Because reactive() is used, Vue automatically updates
-  these values whenever the user changes an input.
-*/
 const form = reactive({
   title: '',
   type: 'Full-Time',
   location: '',
   description: '',
 
-  // CareerHub stores salary as real numbers instead
-  // of a string like "$50K - $60K".
   salary_min: null,
   salary_max: null,
 
   currency: 'USD',
 });
 
-/*
-  This function will eventually send the new job to Laravel.
-
-  IMPORTANT:
-  POST /api/jobs is not built in Laravel yet.
-  We will build that in Milestone 7 (CRUD).
-
-  The form is being prepared now so its data already matches
-  our real CareerHub database.
-*/
 const handleSubmit = async () => {
   const newJob = {
-    // Build the exact object Laravel will eventually receive.
     title: form.title,
     type: form.type,
     location: form.location,
@@ -47,19 +28,14 @@ const handleSubmit = async () => {
     salary_max: form.salary_max,
     currency: form.currency,
 
-    // New jobs begin active by default.
     status: 'active',
   };
 
   try {
-    // Send the completed form to Laravel.
     const response = await axios.post('/api/jobs', newJob);
 
     toast.success('Job published successfully');
 
-    // Example:
-    // Laravel creates job ID 3
-    // -> navigate to /jobs/3
     router.push(`/jobs/${response.data.id}`);
   } catch (error) {
     console.error('Error creating job', error);
@@ -73,7 +49,6 @@ const handleSubmit = async () => {
   <section class="py-12 sm:py-16">
     <div class="mx-auto max-w-3xl px-6">
 
-      <!-- Page heading -->
       <div class="mb-8">
         <p
           class="text-sm font-semibold uppercase tracking-wider text-indigo-600"
@@ -91,20 +66,12 @@ const handleSubmit = async () => {
         </p>
       </div>
 
-      <!--
-        @submit.prevent does two things:
-
-        1. Prevents the browser from refreshing the whole page.
-        2. Runs our handleSubmit() JavaScript function instead.
-      -->
       <form
         @submit.prevent="handleSubmit"
         class="space-y-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
       >
 
-        <!-- ========================= -->
         <!-- Job Details -->
-        <!-- ========================= -->
 
         <div>
           <h2 class="text-xl font-bold text-slate-900">
@@ -116,7 +83,6 @@ const handleSubmit = async () => {
           </p>
         </div>
 
-        <!-- Job title -->
         <div>
           <label
             for="title"
@@ -135,7 +101,6 @@ const handleSubmit = async () => {
           />
         </div>
 
-        <!-- Employment type + location -->
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 
           <div>
@@ -179,7 +144,6 @@ const handleSubmit = async () => {
 
         </div>
 
-        <!-- Description -->
         <div>
           <label
             for="description"
@@ -198,12 +162,9 @@ const handleSubmit = async () => {
           ></textarea>
         </div>
 
-        <!-- Separator -->
         <div class="border-t border-slate-200"></div>
 
-        <!-- ========================= -->
         <!-- Compensation -->
-        <!-- ========================= -->
 
         <div>
           <h2 class="text-xl font-bold text-slate-900">
@@ -217,7 +178,6 @@ const handleSubmit = async () => {
 
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
 
-          <!-- Minimum salary -->
           <div>
             <label
               for="salary_min"
@@ -236,7 +196,6 @@ const handleSubmit = async () => {
             />
           </div>
 
-          <!-- Maximum salary -->
           <div>
             <label
               for="salary_max"
@@ -255,7 +214,6 @@ const handleSubmit = async () => {
             />
           </div>
 
-          <!-- Currency -->
           <div>
             <label
               for="currency"
@@ -277,10 +235,8 @@ const handleSubmit = async () => {
 
         </div>
 
-        <!-- Separator -->
         <div class="border-t border-slate-200"></div>
 
-        <!-- Information about future company system -->
         <div class="rounded-xl bg-indigo-50 p-5">
           <h3 class="font-semibold text-indigo-900">
             Company profile
@@ -292,11 +248,9 @@ const handleSubmit = async () => {
           </p>
         </div>
 
-        <!-- Form actions -->
         <div
           class="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:justify-end"
         >
-          <!-- Cancel simply returns to the jobs page. -->
           <button
             type="button"
             @click="router.push('/jobs')"
@@ -305,7 +259,6 @@ const handleSubmit = async () => {
             Cancel
           </button>
 
-          <!-- Submit triggers handleSubmit(). -->
           <button
             type="submit"
             class="rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-indigo-700"

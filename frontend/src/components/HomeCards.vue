@@ -6,7 +6,6 @@ import { RouterLink } from 'vue-router';
   <section class="bg-white py-16">
     <div class="mx-auto max-w-7xl px-6">
 
-      <!-- Section heading -->
       <div class="mb-10 text-center">
         <h2 class="text-3xl font-bold text-slate-900">
           Built for both sides of hiring
@@ -20,7 +19,6 @@ import { RouterLink } from 'vue-router';
 
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 
-        <!-- Job Seeker Card -->
         <div
           class="rounded-2xl border border-slate-200 bg-slate-50 p-8 shadow-sm"
         >
@@ -47,7 +45,6 @@ import { RouterLink } from 'vue-router';
           </RouterLink>
         </div>
 
-        <!-- Employer Card -->
         <div
           class="rounded-2xl border border-indigo-100 bg-indigo-600 p-8 shadow-sm"
         >

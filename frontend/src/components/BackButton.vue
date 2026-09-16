@@ -3,10 +3,6 @@ import { RouterLink } from 'vue-router';
 </script>
 
 <template>
-  <!--
-    Simple navigation back to the jobs list.
-    We use RouterLink so Vue changes pages without reloading the site.
-  -->
   <div class="mx-auto max-w-7xl px-6 pt-8">
     <RouterLink
       to="/jobs"
