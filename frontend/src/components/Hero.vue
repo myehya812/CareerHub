@@ -6,14 +6,12 @@ defineProps({
   title: {
     type: String,
 
-    // Main CareerHub message.
     default: 'Find the right opportunity for your next move.',
   },
 
   subtitle: {
     type: String,
 
-    // Explain what CareerHub actually does.
     default:
       'Discover jobs, explore growing companies, and take the next step in your career.',
   },
@@ -28,26 +26,22 @@ defineProps({
       class="mx-auto flex max-w-7xl flex-col items-center px-6 py-24 text-center lg:py-32"
     >
 
-      <!-- Small label above heading -->
       <div
         class="mb-6 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700"
       >
         Build your career with confidence
       </div>
 
-      <!-- Main heading -->
       <h1
         class="max-w-4xl text-4xl font-black tracking-tight text-slate-900 sm:text-5xl md:text-6xl"
       >
         {{ title }}
       </h1>
 
-      <!-- Supporting text -->
       <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
         {{ subtitle }}
       </p>
 
-      <!-- Main actions -->
       <div class="mt-8 flex flex-col gap-3 sm:flex-row">
 
         <RouterLink

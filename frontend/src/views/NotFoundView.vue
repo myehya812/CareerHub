@@ -6,12 +6,10 @@ import { RouterLink } from 'vue-router';
   <section class="flex min-h-[70vh] items-center justify-center px-6 py-20">
     <div class="max-w-xl text-center">
 
-      <!-- Small error code -->
       <p class="text-sm font-bold uppercase tracking-widest text-indigo-600">
         Error 404
       </p>
 
-      <!-- Main message -->
       <h1 class="mt-4 text-5xl font-black tracking-tight text-slate-900">
         Page not found
       </h1>
@@ -21,10 +19,6 @@ import { RouterLink } from 'vue-router';
         existed.
       </p>
 
-      <!--
-        RouterLink changes pages inside Vue
-        without reloading the entire application.
-      -->
       <div class="mt-8 flex justify-center gap-3">
         <RouterLink
           to="/"

@@ -22,7 +22,6 @@ const truncatedDescription = computed(() => {
 
 
 const formattedSalary = computed(() => {
-  // Read the values sent by Laravel.
   const min = Number(props.job.salary_min);
   const max = Number(props.job.salary_max);
 
@@ -43,15 +42,10 @@ const formattedSalary = computed(() => {
 </script>
 
 <template>
-  <!--
-    One reusable CareerHub job card.
-    The job data comes from Laravel through the "job" prop.
-  -->
   <article
     class="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
   >
 
-    <!-- Job type -->
     <div class="mb-4">
       <span
         class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700"
@@ -60,14 +54,12 @@ const formattedSalary = computed(() => {
       </span>
     </div>
 
-    <!-- Job title -->
     <h3
       class="text-xl font-bold text-slate-900 transition group-hover:text-indigo-600"
     >
       {{ job.title }}
     </h3>
 
-    <!-- Job description -->
     <div class="mt-4 flex-grow">
       <p class="leading-6 text-slate-600">
         {{ truncatedDescription }}
@@ -81,7 +73,6 @@ const formattedSalary = computed(() => {
       </button>
     </div>
 
-    <!-- Salary -->
     <div class="mt-6">
       <p class="font-semibold text-slate-900">
         {{ formattedSalary }}
@@ -94,11 +85,9 @@ const formattedSalary = computed(() => {
 
     <div class="my-5 border-t border-slate-100"></div>
 
-    <!-- Footer -->
     <div
       class="flex items-center justify-between gap-4"
     >
-      <!-- Location -->
       <div class="flex items-center gap-2 text-sm text-slate-500">
         <i class="pi pi-map-marker text-indigo-500"></i>
 
@@ -107,10 +96,6 @@ const formattedSalary = computed(() => {
         </span>
       </div>
 
-      <!--
-        If job.id = 2,
-        this links to /jobs/2.
-      -->
       <RouterLink
         :to="'/jobs/' + job.id"
         class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
