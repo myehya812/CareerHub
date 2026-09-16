@@ -150,6 +150,132 @@ CareerHub/
 
 The frontend and backend are kept separate so that Vue communicates with Laravel through HTTP API requests.
 
+
+## Development Phases
+
+CareerHub is being developed incrementally, with each phase introducing a new part of the full-stack architecture.
+
+### Phase 1 — Project Foundation
+**Completed**
+
+- Set up Vue 3 frontend
+- Set up Laravel backend
+- Configure MySQL database
+- Connect Vue and Laravel through REST API requests
+- Configure Git and GitHub
+- Establish frontend/backend project structure
+
+---
+
+### Phase 2 — Job Listing System
+**Completed**
+
+- Create the `job_listings` database table
+- Build the JobListing model
+- Display jobs from Laravel in Vue
+- View individual job listings
+- Create new job listings
+- Edit existing job listings
+- Delete job listings
+- Connect Vue forms to Laravel CRUD endpoints
+
+---
+
+### Phase 3 — Authentication
+**Completed**
+
+- User registration
+- User login
+- User logout
+- Laravel Sanctum SPA authentication
+- Session-based authentication
+- Restore authentication state after page refresh
+- Pinia authentication store
+- Protected Vue routes
+
+---
+
+### Phase 4 — Roles and Job Ownership
+**Completed**
+
+- Add `job_seeker` and `company` roles
+- Role selection during registration
+- Role-aware frontend navigation
+- Company-only job creation
+- Connect job listings to their creator
+- User → JobListing Eloquent relationship
+- Owner-only job editing
+- Owner-only job deletion
+- Backend ownership authorization
+- Prevent companies from modifying another company's jobs
+
+---
+
+### Phase 5 — Job Applications
+**Next**
+
+- Create the applications database table
+- Connect applications to users and jobs
+- Allow job seekers to apply for jobs
+- Prevent duplicate applications
+- Allow job seekers to view their applications
+- Allow companies to view applicants for their jobs
+- Application status management
+
+---
+
+### Phase 6 — Job Discovery
+
+- Search jobs
+- Filter jobs
+- Sort job results
+- Pagination
+- Improve job browsing experience
+
+---
+
+### Phase 7 — User and Company Profiles
+
+- Job seeker profiles
+- Company profiles
+- Profile editing
+- CV/resume uploads
+- Company information on job listings
+
+---
+
+### Phase 8 — Dashboards
+
+- Job seeker dashboard
+- Company dashboard
+- Application statistics
+- Job management overview
+- Application tracking
+
+---
+
+### Phase 9 — Production Quality
+
+- Laravel Policies
+- Improved validation
+- Better error handling
+- Loading and empty states
+- Responsive UI improvements
+- Refactoring
+- Automated testing
+
+---
+
+### Phase 10 — Deployment
+
+- Production configuration
+- Deploy frontend
+- Deploy backend
+- Deploy database
+- Environment and security configuration
+- Final documentation
+- Portfolio screenshots
+
 ## Current Data Model
 
 The main entities currently implemented are:
