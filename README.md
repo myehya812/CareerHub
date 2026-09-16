@@ -1,310 +1,216 @@
 # CareerHub
 
-> A full-stack recruitment and job management platform built with Vue 3, Laravel, MySQL, and RESTful APIs.
+CareerHub is a full-stack recruitment platform built with Vue.js, Laravel, and MySQL.
 
-![Vue.js](https://img.shields.io/badge/Vue.js-3-4FC08D?logo=vuedotjs&logoColor=white)
-![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-8-777BB4?logo=php&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript&logoColor=black)
+The project is designed to simulate a real-world job platform where job seekers can discover opportunities and companies can create and manage job listings.
 
-> [!NOTE]
-> CareerHub is currently under active development. New features are being added progressively as the project grows.
+It is being developed as a portfolio project to practice full-stack development, REST APIs, authentication, authorization, database relationships, and modern frontend architecture.
 
----
+## Current Status
 
-## 📌 About CareerHub
+CareerHub is currently under active development.
 
-**CareerHub** is a full-stack recruitment platform designed to simulate a real-world job management application.
+Implemented so far:
 
-I am building the project to strengthen my understanding of full-stack development and software engineering by connecting a modern frontend application to a backend REST API and relational database.
+- Job listing CRUD
+- User registration and login
+- Session-based authentication with Laravel Sanctum
+- Job Seeker and Company roles
+- Protected frontend routes
+- Company-only job creation
+- Job ownership
+- Owner-only job editing
+- Owner-only job deletion
+- Backend authorization checks
+- Persistent authentication after page refresh
+- Role-aware navigation
+- Laravel API integration with Vue
+- MySQL database integration
 
-The application uses **Vue 3** for the frontend, **Laravel 12** for the backend, and **MySQL** for data storage.
-
-CareerHub focuses on practical software development concepts including REST API development, frontend/backend integration, relational database design, CRUD operations, validation, authentication, authorization, search, filtering, pagination, and maintainable application structure.
-
----
-
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Frontend
 
 - Vue 3
-- JavaScript
 - Vue Router
+- Pinia
 - Axios
 - Tailwind CSS
 - Vite
 
 ### Backend
 
-- Laravel 12
 - PHP
-- RESTful APIs
+- Laravel 12
+- Laravel Sanctum
 - Eloquent ORM
+- REST API
 
 ### Database
 
-- MySQL
+- MySQL 8
 
 ### Development Tools
 
 - Git
 - GitHub
-- Visual Studio Code
+- VS Code
+- Composer
+- npm
 
----
+## Application Roles
 
-## ✅ Implemented Features
+CareerHub currently supports two user roles.
 
-CareerHub currently includes:
+### Job Seeker
 
-- Browse available job listings
-- View individual job details
-- Job creation and editing forms
-- Vue frontend connected to Laravel
-- REST API communication using Axios
-- Laravel connected to MySQL
-- Relational job data storage
-- Basic responsive user interface
+Job seekers can:
 
----
+- Register and log in
+- Browse available jobs
+- View individual job listings
 
-## 🚧 In Progress
+Additional job seeker features are planned as development continues.
 
-The following functionality is currently being developed:
+### Company
 
-- Complete job CRUD operations
-- Authentication and authorization
-- Search and filtering
-- Pagination
-- Form validation
-- Loading states
-- Error handling
-- Improved responsive design
+Companies can:
 
----
+- Register and log in
+- Create job listings
+- Edit their own job listings
+- Delete their own job listings
 
-## 🏗 Architecture
+Companies cannot modify jobs created by another company.
 
-CareerHub follows a separated frontend/backend architecture.
+Authorization is enforced by the Laravel backend rather than relying only on frontend visibility.
+
+## Authentication and Authorization
+
+CareerHub uses Laravel Sanctum for SPA authentication.
+
+The authentication flow uses Laravel sessions and cookies rather than storing authentication tokens manually in the browser.
+
+The project currently applies three levels of access control:
+
+1. Authentication  
+   Determines whether a user is logged in.
+
+2. Role authorization  
+   Determines whether the user is a Job Seeker or Company.
+
+3. Ownership authorization  
+   Determines whether a company owns a specific job listing before allowing it to update or delete that job.
+
+Example:
 
 ```text
-┌─────────────────────────┐
-│       Vue 3 App         │
-│       Frontend          │
-└────────────┬────────────┘
-             │
-             │ Axios / HTTP
-             │ REST API
-             ▼
-┌─────────────────────────┐
-│     Laravel Backend     │
-│        REST API         │
-└────────────┬────────────┘
-             │
-             │ Eloquent ORM
-             ▼
-┌─────────────────────────┐
-│         MySQL           │
-│        Database         │
-└─────────────────────────┘
+Company A creates Job #5
+        |
+        v
+job_listings.user_id = Company A ID
+        |
+        v
+Company A can edit/delete Job #5
+
+Company B
+        |
+        v
+Attempts to modify Job #5
+        |
+        v
+403 Forbidden
 ```
 
-The **Vue frontend** handles the user interface and client-side interactions.
-
-The **Laravel backend** handles API requests, application logic, validation, and database communication.
-
-**MySQL** stores the application's persistent relational data.
-
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```text
 CareerHub/
-│
-├── frontend/
-│   └── Vue 3 application
-│
-├── backend/
-│   └── Laravel REST API
-│
-└── README.md
+|
+|-- backend/
+|   |-- app/
+|   |   |-- Http/Controllers/
+|   |   |-- Models/
+|   |
+|   |-- database/
+|   |   |-- migrations/
+|   |
+|   |-- routes/
+|       |-- api.php
+|
+|-- frontend/
+|   |-- src/
+|       |-- components/
+|       |-- router/
+|       |-- stores/
+|       |-- views/
+|
+|-- README.md
 ```
 
-### Frontend
+The frontend and backend are kept separate so that Vue communicates with Laravel through HTTP API requests.
+
+## Current Data Model
+
+The main entities currently implemented are:
 
 ```text
-frontend/
-├── src/
-│   ├── components/
-│   ├── views/
-│   ├── router/
-│   ├── assets/
-│   └── App.vue
-│
-├── package.json
-└── vite.config.js
+User
+ |
+ | hasMany
+ v
+JobListing
 ```
 
-### Backend
+Each company-owned job stores the ID of the user that created it through:
 
 ```text
-backend/
-├── app/
-├── bootstrap/
-├── config/
-├── database/
-├── routes/
-├── resources/
-├── tests/
-└── artisan
+job_listings.user_id
 ```
 
----
+Laravel Eloquent relationships are used to connect users and their job listings.
 
-## 🔌 REST API
+## API Overview
 
-The Vue frontend communicates with Laravel through RESTful API endpoints.
+### Public Routes
 
-### Implemented Endpoints
+```http
+POST /api/register
+POST /api/login
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/api/jobs` | Retrieve available job listings |
-| `GET` | `/api/jobs/{id}` | Retrieve a specific job |
-
-### Planned Endpoints
-
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `POST` | `/api/jobs` | Create a new job |
-| `PUT` | `/api/jobs/{id}` | Update an existing job |
-| `DELETE` | `/api/jobs/{id}` | Delete a job |
-
-Additional endpoints will be added for authentication, companies, applications, saved jobs, and user profiles as development continues.
-
----
-
-## 🗄 Database
-
-CareerHub uses **MySQL** as its relational database.
-
-Laravel's **Eloquent ORM** is used to interact with the database and manage relationships between application entities.
-
-The database is being designed around entities such as:
-
-```text
-Users
- │
- ├── Applications
- │
- └── Saved Jobs
-
-Companies
- │
- └── Jobs
-      │
-      └── Applications
+GET /api/jobs
+GET /api/jobs/{id}
 ```
 
-Additional tables and relationships will be introduced as the application develops.
+### Authenticated Routes
 
----
+```http
+GET  /api/user
+POST /api/logout
+```
 
-## 🗺 Roadmap
+### Company Job Management
 
-### Phase 1 — Project Foundation
+```http
+POST   /api/jobs
+PUT    /api/jobs/{id}
+DELETE /api/jobs/{id}
+```
 
-- [x] Create Vue frontend
-- [x] Create Laravel backend
-- [x] Configure MySQL
-- [x] Connect Laravel to MySQL
-- [x] Connect Vue frontend to Laravel API
-- [x] Display job listings
-- [x] Display individual job details
+Job creation, modification, and deletion are protected by backend authentication and authorization.
 
-### Phase 2 — Job Management
+## Local Setup
 
-- [ ] Complete job creation
-- [ ] Complete job editing
-- [ ] Delete jobs
-- [ ] Backend validation
-- [ ] Frontend validation
-
-### Phase 3 — Authentication
-
-- [ ] User registration
-- [ ] User login
-- [ ] Logout
-- [ ] Protected frontend routes
-- [ ] Protected API routes
-
-### Phase 4 — Roles & Authorization
-
-- [ ] Applicant accounts
-- [ ] Employer accounts
-- [ ] Role-based authorization
-- [ ] Laravel authorization policies
-
-### Phase 5 — Companies & Applications
-
-- [ ] Company profiles
-- [ ] Employer job management
-- [ ] Apply for jobs
-- [ ] View submitted applications
-- [ ] Employer application management
-- [ ] Application status tracking
-- [ ] Saved jobs
-
-### Phase 6 — Search & User Experience
-
-- [ ] Search jobs
-- [ ] Filter jobs
-- [ ] Sort jobs
-- [ ] Pagination
-- [ ] Loading states
-- [ ] Error states
-- [ ] Improved responsive design
-
-### Phase 7 — Advanced Features
-
-- [ ] CV / résumé uploads
-- [ ] Applicant dashboard
-- [ ] Employer dashboard
-- [ ] Email notifications
-
----
-
-## ⚙️ Development Setup
-
-### Requirements
-
-Before running CareerHub locally, make sure the following are installed:
-
-- Git
-- Node.js
-- npm
-- PHP
-- Composer
-- MySQL
-
----
-
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/myehya812/CareerHub.git
 cd CareerHub
 ```
 
----
+### 2. Backend setup
 
-### 2. Backend Setup
-
-Move into the Laravel backend:
+Move into the Laravel project:
 
 ```bash
 cd backend
@@ -316,155 +222,125 @@ Install PHP dependencies:
 composer install
 ```
 
-Create the Laravel environment file.
-
-#### Windows PowerShell
-
-```powershell
-Copy-Item .env.example .env
-```
-
-#### Linux / macOS
+Create your local environment file:
 
 ```bash
-cp .env.example .env
+copy .env.example .env
 ```
 
-Generate the application key:
+Generate the Laravel application key:
 
 ```bash
 php artisan key:generate
 ```
 
----
-
-### 3. Configure MySQL
-
-Create a database for CareerHub:
-
-```sql
-CREATE DATABASE careerhub;
-```
-
-Then open:
+Create a MySQL database named:
 
 ```text
-backend/.env
+careerhub
 ```
 
-Configure the database connection:
+Configure the database connection inside `.env`.
+
+Example:
 
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=careerhub
-DB_USERNAME=root
-DB_PASSWORD=
+DB_USERNAME=your_mysql_user
+DB_PASSWORD=your_mysql_password
 ```
 
-Use the correct MySQL username and password for your environment.
-
----
-
-### 4. Run Database Migrations
-
-From the `backend` directory:
+Run the migrations:
 
 ```bash
 php artisan migrate
 ```
 
-If database seeders are available:
-
-```bash
-php artisan db:seed
-```
-
----
-
-### 5. Start the Laravel Backend
+Start Laravel:
 
 ```bash
 php artisan serve
 ```
 
-The Laravel backend will normally run at:
+The backend will normally run at:
 
 ```text
 http://127.0.0.1:8000
 ```
 
----
+### 3. Frontend setup
 
-### 6. Start the Vue Frontend
-
-Open another terminal.
-
-Move into the frontend directory:
+Open another terminal:
 
 ```bash
 cd frontend
 ```
 
-Install JavaScript dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Start the development server:
+Start the Vue development server:
 
 ```bash
 npm run dev
 ```
 
-Vite will display the frontend URL in the terminal.
-
-It will usually be:
+The frontend will normally run at:
 
 ```text
-http://localhost:5173
+http://localhost:3000
 ```
 
----
+## Development Roadmap
 
-## 📸 Screenshots
+Planned features include:
 
-Screenshots will be added once the frontend interface is more complete.
+- Job applications
+- Saved jobs
+- Company profiles
+- Job seeker profiles
+- CV upload
+- Search
+- Filtering
+- Sorting
+- Pagination
+- Application tracking
+- Company dashboard
+- Job seeker dashboard
+- Notifications
+- Improved validation
+- Laravel Policies
+- Automated testing
+- Responsive UI improvements
+- Deployment
 
-<!--
+## Main Learning Goals
 
-When ready, create:
+CareerHub is being built to practice the workflow used in real full-stack applications, including:
 
-docs/
-└── screenshots/
-    ├── job-listings.png
-    ├── job-details.png
-    └── job-form.png
+- Designing REST APIs
+- Connecting a Vue frontend to a Laravel backend
+- Managing application state with Pinia
+- Working with MySQL relational databases
+- Using Eloquent ORM relationships
+- Authentication and sessions
+- Role-based authorization
+- Resource ownership
+- Protected routes
+- Form handling
+- HTTP status codes
+- Error handling
+- Git and GitHub workflows
+- Full-stack debugging
 
-Then replace this section with:
+## Project Direction
 
-### Job Listings
+The goal is to gradually develop CareerHub into a complete recruitment platform while keeping the architecture understandable and maintainable.
 
-![CareerHub Job Listings](docs/screenshots/job-listings.png)
-
-### Job Details
-
-![CareerHub Job Details](docs/screenshots/job-details.png)
-
-### Job Form
-
-![CareerHub Job Form](docs/screenshots/job-form.png)
-
--->
-
----
-
-## 📈 Project Status
-
-🚧 **CareerHub is currently under active development.**
-
-The application is being built progressively as additional full-stack development and software engineering concepts are implemented.
-
-Features, architecture, and documentation will continue to evolve as development progresses.
+Features are being added incrementally rather than generating the full system at once, allowing each part of the frontend, backend, and database architecture to be understood and tested independently.
