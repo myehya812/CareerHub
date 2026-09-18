@@ -87,6 +87,28 @@ const router = createRouter({
 },
 
 
+{
+  path: "/applications",
+  name:"applications",
+  component: () => import("@/views/MyApplicationsView.vue"),
+
+  meta: {
+    requiresAuth:true,
+    requiresRole:"job_seeker",
+  },
+},
+
+{
+  path: "/jobs/:id/applicants",
+  name: "job-applicants",
+  component: () => import("@/views/ApplicantsView.vue"),
+  meta: {
+    requiresAuth: true,
+    requiresRole: "company",
+  },
+},
+
+
   ],
 });
 
@@ -108,5 +130,8 @@ router.beforeEach(async (to) =>{   //("to") The route the user is trying to go t
     return '/';
   }
 });
+
+
+
 
 export default router;
