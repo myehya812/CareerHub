@@ -69,20 +69,20 @@ const deleteJob = async () => {
   }
 };
 
-  const checkApplicationStatus = async () => {
-    if(!auth.isAuthenticated || auth.user?.role !== 'job_seeker'){
-      return;
-    }try{
-      const response = await axios.get(`/api/jobs/${jobId}/application status:`,);
+const checkApplicationStatus = async () => {
+  if (!auth.isAuthenticated || auth.user?.role !== 'job_seeker') {
+    return;
+  } try {
+    const response = await axios.get(`/api/jobs/${jobId}/application status:`,);
 
-      hasApplied.value = response.data.has_applied;
+    hasApplied.value = response.data.has_applied;
 
 
-    }catch(error){
-      console.error('console.error("Error checking application status:", error);')
-    }
+  } catch (error) {
+    console.error('console.error("Error checking application status:", error);')
+  }
 
-  };
+};
 
 
 onMounted(async () => {
@@ -118,7 +118,7 @@ const applyToJob = async () => {
     console.error("Error applying to job: ", error);
 
     if (error.response?.status === 409) {
-        hasApplied.value = true;
+      hasApplied.value = true;
       toast.error("You have already applied to this job,");
     } else if (error.response?.status === 403) {
       toast.error("You are not allowed to apply to this job.");
@@ -140,9 +140,7 @@ const applyToJob = async () => {
       <main class="lg:col-span-2">
         <!-- Job Header -->
         <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <span
-            class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700"
-          >
+          <span class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
             {{ state.job.type }}
           </span>
 
@@ -168,9 +166,7 @@ const applyToJob = async () => {
         </div>
 
         <!-- Job Description -->
-        <div
-          class="mt-6 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
-        >
+        <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <h2 class="text-xl font-bold text-slate-900">About the role</h2>
 
           <p class="mt-4 leading-7 text-slate-600">
@@ -181,22 +177,17 @@ const applyToJob = async () => {
 
       <!-- Sidebar -->
       <aside class="space-y-6">
-        <div
-          class="rounded-2xl border border-indigo-100 bg-indigo-600 p-6 text-white shadow-sm"
-        >
+        <div class="rounded-2xl border border-indigo-100 bg-indigo-600 p-6 text-white shadow-sm">
           <h2 class="text-xl font-bold">Interested in this role?</h2>
 
           <p class="mt-2 text-sm leading-6 text-indigo-100">
             Apply now and let the company know you're interested in this role.
           </p>
 
-          <button
-            v-if="auth.isAuthenticated && auth.user?.role === 'job_seeker'"
-            @click="applyToJob"
+          <button v-if="auth.isAuthenticated && auth.user?.role === 'job_seeker'" @click="applyToJob"
             :disabled="isApplying || hasApplied"
-            class="mt-5 w-full rounded-xl bg-white px-4 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {{ hasApplied ? "Already Applied":isApplying ? " Applying..." : 'Apply Now' }}
+            class="mt-5 w-full rounded-xl bg-white px-4 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-70">
+            {{ hasApplied ? "Already Applied" : isApplying ? " Applying..." : 'Apply Now' }}
           </button>
         </div>
 
@@ -210,10 +201,7 @@ const applyToJob = async () => {
         </div>
 
         <!-- Only the company that published this job can manage it. -->
-        <div
-          v-if="isOwner"
-          class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-        >
+        <div v-if="isOwner" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 class="text-xl font-bold text-slate-900">Manage this job</h2>
 
           <p class="mt-2 text-sm leading-6 text-slate-500">
@@ -221,17 +209,20 @@ const applyToJob = async () => {
           </p>
 
           <div class="mt-5 space-y-3">
-            <RouterLink
-              :to="`/jobs/edit/${jobId}`"
-              class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-indigo-700"
-            >
+
+            <RouterLink :to="`/jobs/${jobId}/applicants`"
+              class="block w-full rounded-xl bg-slate-900 px-4 py-3 text-center font-semibold text-white transition hover:bg-slate-800">
+              View Applicants
+            </RouterLink>
+
+
+            <RouterLink :to="`/jobs/edit/${jobId}`"
+              class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-indigo-700">
               Edit Job
             </RouterLink>
 
-            <button
-              @click="deleteJob"
-              class="w-full rounded-xl border border-red-200 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-50"
-            >
+            <button @click="deleteJob"
+              class="w-full rounded-xl border border-red-200 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-50">
               Delete Job
             </button>
           </div>

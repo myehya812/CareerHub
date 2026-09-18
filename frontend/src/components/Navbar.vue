@@ -1,7 +1,7 @@
 <script setup>
-import { RouterLink, useRoute, useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
-import { useAuthStore } from '@/stores/auth';
+import { RouterLink, useRoute, useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
+import { useAuthStore } from "@/stores/auth";
 
 const toast = useToast();
 
@@ -19,11 +19,11 @@ async function handleLogout() {
   try {
     await auth.logout();
 
-    toast.success('Logged out successfully.');
+    toast.success("Logged out successfully.");
 
-    router.push('/');
+    router.push("/");
   } catch (err) {
-    toast.error('Unable to log out. Please try again later.');
+    toast.error("Unable to log out. Please try again later.");
   }
 }
 </script>
@@ -32,26 +32,24 @@ async function handleLogout() {
   <nav class="border-b border-slate-200 bg-white">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-20 items-center justify-between">
-
-        <RouterLink to="/" class="flex items-center gap-3">
+        <RouterLink to="/" class="flex items-center gap-4">
           <div
             class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-lg font-black text-white">
             C
           </div>
 
-          <span class="text-2xl font-bold tracking-tight text-slate-900">
+          <span class="text-2xl pr-2 font-bold tracking-tight text-slate-900">
             Career<span class="text-indigo-600">Hub</span>
           </span>
         </RouterLink>
 
         <div class="flex items-center gap-2">
-
           <RouterLink to="/" :class="[
             isActiveLink('/')
               ? 'bg-indigo-50 text-indigo-700'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
 
-            'rounded-lg px-4 py-2 font-medium transition',
+            'rounded-lg px-5 py-2 font-medium transition',
           ]">
             Home
           </RouterLink>
@@ -66,7 +64,17 @@ async function handleLogout() {
             Find Jobs
           </RouterLink>
 
-          <RouterLink v-if="auth.isAuthenticated && auth.user?.roule === 'company'"  to="/jobs/add"
+          <RouterLink v-if="auth.isAuthenticated && auth.user?.role === 'job_seeker'" to="/applications" :class="[
+            isActiveLink('/applications')
+              ? 'bg-indigo-50 text-indigo-700'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+
+            'rounded-lg px-4 py-2 font-medium transition',
+          ]">
+            My Applications
+          </RouterLink>
+
+          <RouterLink v-if="auth.isAuthenticated && auth.user?.role === 'company'" to="/jobs/add"
             class="ml-2 rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-700">
             Post a Job
           </RouterLink>
@@ -93,7 +101,6 @@ async function handleLogout() {
               Logout
             </button>
           </template>
-
         </div>
       </div>
     </div>
