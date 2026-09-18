@@ -17,8 +17,15 @@ class JobListing extends Model
         'status',
     ];
 
-    public function user() {
+    // Jobs posted by this user
+public function jobListings()
+{
+    return $this->hasMany(JobListing::class);
+}
 
-        return $this->belongsTo(User::class);
-    }
+// Applications submitted by this user
+public function applications()
+{
+    return $this->hasMany(Application::class);
+}
 }

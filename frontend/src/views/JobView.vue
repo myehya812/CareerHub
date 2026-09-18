@@ -1,7 +1,7 @@
 <script setup>
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import BackButton from "@/components/BackButton.vue";
-import { reactive, onMounted, computed } from "vue";
+import { reactive, onMounted, computed, ref } from "vue";
 import { useRoute, RouterLink, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import axios from "axios";
@@ -12,7 +12,10 @@ const router = useRouter();
 const toast = useToast();
 
 const auth = useAuthStore();
+
 const jobId = route.params.id;
+const isApplying = ref(false);
+const hasApplied = ref(false);
 
 const state = reactive({
   job: {},
@@ -24,68 +27,109 @@ const formattedSalary = computed(() => {
   const max = Number(state.job.salary_max);
 
   if (Number.isNaN(min) || Number.isNaN(max)) {
-    return 'Salary not specified';
+    return "Salary not specified";
   }
 
   const formatNumber = (value) => {
-    return new Intl.NumberFormat('en-US').format(value);
+    return new Intl.NumberFormat("en-US").format(value);
   };
 
   return `${state.job.currency} ${formatNumber(min)} - ${formatNumber(max)}`;
 });
 
-
-
 const isOwner = computed(() => {
   return (
     auth.isAuthenticated &&
-    auth.user?.role === 'company' &&
+    auth.user?.role === "company" &&
     auth.user?.id === state.job.user_id
   );
 });
 
-
-
-
 const deleteJob = async () => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this job?",
+  );
 
-  const confirmDelete = window.confirm('Are you sure you want to delete this job?');
+  if (!confirmDelete) return;
 
-  if(!confirmDelete) return;
+  try {
+    await axios.delete(`/api/jobs/${jobId}`);
 
+    toast.success("Job deleted successfully.");
 
-  try{
-await axios.delete(`/api/jobs/${jobId}`);
+    router.push("/jobs");
+  } catch (error) {
+    console.error("Error deleting job:", error);
 
-    toast.success('Job deleted successfully.');
-
-    router.push('/jobs');
-  } catch(error){
-        console.error('Error deleting job:', error);
-
-        if(error.response?.status === 403  ){
-          toast.error('You are not allowed to delete this job.');
-        }else{
-          toast.error('The job could not be deleted');
-        }
-
+    if (error.response?.status === 403) {
+      toast.error("You are not allowed to delete this job.");
+    } else {
+      toast.error("The job could not be deleted");
+    }
   }
-  
 };
+
+  const checkApplicationStatus = async () => {
+    if(!auth.isAuthenticated || auth.user?.role !== 'job_seeker'){
+      return;
+    }try{
+      const response = await axios.get(`/api/jobs/${jobId}/application status:`,);
+
+      hasApplied.value = response.data.has_applied;
+
+
+    }catch(error){
+      console.error('console.error("Error checking application status:", error);')
+    }
+
+  };
+
 
 onMounted(async () => {
   try {
     const response = await axios.get(`/api/jobs/${jobId}`);
     state.job = response.data;
+    await checkApplicationStatus();
   } catch (error) {
     console.error("Error fetching job", error);
   } finally {
     state.isLoading = false;
   }
 });
+
+
+
+const applyToJob = async () => {
+  if (!auth.isAuthenticated || auth.user?.role !== "job_seeker") {
+    return;
+  }
+
+  isApplying.value = true;
+
+  try {
+    await axios.get(`/sanctum/csrf-cookie`);
+
+    await axios.post(`/api/jobs/${jobId}/applications`);
+
+    hasApplied.value = true;
+
+    toast.success("Application submitted successfully");
+  } catch (error) {
+    console.error("Error applying to job: ", error);
+
+    if (error.response?.status === 409) {
+        hasApplied.value = true;
+      toast.error("You have already applied to this job,");
+    } else if (error.response?.status === 403) {
+      toast.error("You are not allowed to apply to this job.");
+    } else {
+      toast.error("The application could not be submitted");
+    }
+  } finally {
+    isApplying.value = false;
+  }
+};
 </script>
-
-
 
 <template>
   <BackButton />
@@ -96,7 +140,9 @@ onMounted(async () => {
       <main class="lg:col-span-2">
         <!-- Job Header -->
         <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <span class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
+          <span
+            class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700"
+          >
             {{ state.job.type }}
           </span>
 
@@ -122,7 +168,9 @@ onMounted(async () => {
         </div>
 
         <!-- Job Description -->
-        <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <div
+          class="mt-6 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
+        >
           <h2 class="text-xl font-bold text-slate-900">About the role</h2>
 
           <p class="mt-4 leading-7 text-slate-600">
@@ -131,38 +179,33 @@ onMounted(async () => {
         </div>
       </main>
 
-       <!-- Sidebar -->
+      <!-- Sidebar -->
       <aside class="space-y-6">
-
         <div
           class="rounded-2xl border border-indigo-100 bg-indigo-600 p-6 text-white shadow-sm"
         >
-          <h2 class="text-xl font-bold">
-            Interested in this role?
-          </h2>
+          <h2 class="text-xl font-bold">Interested in this role?</h2>
 
           <p class="mt-2 text-sm leading-6 text-indigo-100">
-            Applications will be available once CareerHub user accounts are added.
+            Apply now and let the company know you're interested in this role.
           </p>
 
           <button
-            disabled
-            class="mt-5 w-full cursor-not-allowed rounded-xl bg-white/80 px-4 py-3 font-semibold text-indigo-700"
+            v-if="auth.isAuthenticated && auth.user?.role === 'job_seeker'"
+            @click="applyToJob"
+            :disabled="isApplying || hasApplied"
+            class="mt-5 w-full rounded-xl bg-white px-4 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Apply Now
+            {{ hasApplied ? "Already Applied":isApplying ? " Applying..." : 'Apply Now' }}
           </button>
         </div>
 
         <!-- Company Card -->
-        <div
-          class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          <h2 class="text-xl font-bold text-slate-900">
-            About the company
-          </h2>
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-bold text-slate-900">About the company</h2>
 
           <p class="mt-3 leading-6 text-slate-600">
-            Company profiles will appear here once company accounts are added.
+            Company profiles will appear here once company profiles are added.
           </p>
         </div>
 
@@ -171,16 +214,13 @@ onMounted(async () => {
           v-if="isOwner"
           class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
         >
-          <h2 class="text-xl font-bold text-slate-900">
-            Manage this job
-          </h2>
+          <h2 class="text-xl font-bold text-slate-900">Manage this job</h2>
 
           <p class="mt-2 text-sm leading-6 text-slate-500">
             You published this job, so you can edit or remove it.
           </p>
 
           <div class="mt-5 space-y-3">
-
             <RouterLink
               :to="`/jobs/edit/${jobId}`"
               class="block w-full rounded-xl bg-indigo-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-indigo-700"
@@ -194,18 +234,17 @@ onMounted(async () => {
             >
               Delete Job
             </button>
-
           </div>
         </div>
-
       </aside>
     </div>
   </section>
 
-  <div
-    v-else
-    class="flex justify-center py-20"
-  >
+  <div v-else class="flex justify-center py-20">
     <PulseLoader color="#4F46E5" />
   </div>
 </template>
+
+
+
+disabled

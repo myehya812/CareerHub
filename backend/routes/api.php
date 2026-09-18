@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\ApplicationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\JobListingController;
 use App\Http\Controllers\Api\AuthController;
+use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -34,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::put('/jobs/{id}', [JobListingController::class , 'update']);
 
     Route::delete('/jobs/{id}' , [JobListingController::class , 'destroy']);
+
+    Route::post('/jobs/{id}/applications', [ApplicationController::class , 'store']);
+
+    Route::get('/jobs/{id}/applications-status', [ApplicationController::class , 'status']);
 
 
 });
