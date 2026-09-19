@@ -18,13 +18,10 @@ Route::get('/jobs/{id}', [JobListingController::class, 'show']);
 
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+     return $request->user();}
+     )->middleware('auth:sanctum');
 
-
-
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth:sanctum');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 
 
