@@ -4,26 +4,58 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobListing;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 
 class JobListingController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
+        $search =$request->query('search');  //Look in the URL query parameters for something called search.
+        $location = $request->query('location');
+        $type = $request->query('type');
+        $sort = $request->query('sort' , 'newest');
 
-        $jobs = JobListing::all();
+        $query = JobListing::query();
 
+        if($search){
+            $query->where('title' , 'like' , "%{$search}%");
+        }
+
+        if($location){
+            $query->where('location' , 'like' , "%{$location}%");
+        }
+
+        if($type){
+            $query->where('type' ,  $type);
+        }
+
+        switch ($sort) {
+    case 'oldest':
+        $query->orderBy('created_at', 'asc');
+        break;
+
+    case 'salary_low':
+        $query->orderBy('salary_min', 'asc');
+        break;
+
+    case 'salary_high':
+        $query->orderBy('salary_max', 'desc');
+        break;
+
+    default:
+        $query->latest();
+        break;
+}
+
+
+        
+     $jobs = $query->paginate(6);
+                 
         return response()->json($jobs);
-    }
 
-    public function show(int $id)
-    {
-
-        $job = JobListing::findOrFail($id);
-
-        return response()->json($job);
+        
+        
     }
 
 
