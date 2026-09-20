@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\JobListing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ApplicationController extends Controller
 {
@@ -136,4 +137,55 @@ class ApplicationController extends Controller
             'application' => $application,
         ]);
     }
+
+    public function downloadResume(Request $request , $id){
+
+        $user = $request->user();
+
+        if ($user->role !== 'company') {
+        return response()->json([
+            'message' => 'Only companies can download applicant resumes.',
+        ], 403);
+    }
+
+         $application = Application::with([
+        'jobListing',
+        'user.profile',
+    ])->findOrFail($id);
+
+
+         if ($application->jobListing->user_id !== $user->id) {
+        return response()->json([
+            'message' => 'You are not allowed to access this resume.',
+        ], 403);
+    }
+
+
+           $profile = $application->user->profile;
+
+            if (!$profile || !$profile->resume_path) {
+        return response()->json([
+            'message' => 'This applicant has not uploaded a resume.',
+        ], 404);
+    }
+
+
+
+     if (!Storage::disk('local')->exists($profile->resume_path)) {
+        return response()->json([
+            'message' => 'Resume file could not be found.',
+        ], 404);
+    }
+
+        $filePath = Storage::disk('local')->path(
+        $profile->resume_path
+    );
+
+    return response()->download(
+        $filePath,
+        $profile->resume_original_name ?? 'resume.pdf'
+    );
+
+    }
+
 }
