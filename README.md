@@ -1,46 +1,52 @@
 # CareerHub
 
-A full-stack recruitment and job management platform built with **Vue 3, Laravel 12, MySQL, and RESTful APIs**.
+CareerHub is a full-stack job platform built with Vue 3 and Laravel 12.
 
-![Vue](https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white)
-![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?logo=tailwindcss&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?logo=php&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?logo=javascript&logoColor=black)
+The platform allows job seekers to discover jobs, apply to positions, manage their professional profiles, upload resumes, and track applications. Companies can create and manage job listings, review applicants, update application statuses, view candidate profiles, and securely download applicant resumes.
 
-> **Project Status**
->
-> CareerHub is currently under active development.  
-> The core job management, authentication, roles, and ownership systems are complete.
+This project is also being built as a practical full-stack learning project. The main goal is not only to finish the application, but to understand how the frontend, backend, authentication, authorization, database, file storage, APIs, and application architecture work together.
 
 ---
 
-## About CareerHub
+## Current Project Status
 
-CareerHub is a full-stack recruitment platform designed to simulate a real-world job management application.
+CareerHub is currently complete through **Phase 7 — Profiles & Resume Management**.
 
-The project allows two types of users to interact with the platform:
+### Completed
 
-- **Job Seekers**
-- **Companies**
-
-Companies can create and manage their own job listings, while job seekers can browse available opportunities.
-
-The project is being developed incrementally to practice practical full-stack software development concepts including:
-
-- Frontend/backend communication
-- REST API design
-- Relational database design
-- CRUD operations
+- Project foundation
+- Job CRUD
 - Authentication
+- User roles
 - Authorization
-- Resource ownership
-- State management
-- Protected routes
-- Validation
-- Error handling
-- Git and GitHub workflows
+- Job applications
+- Application status management
+- Job search
+- Job filtering
+- Job sorting
+- Pagination
+- Job seeker profiles
+- Company profiles
+- Resume upload
+- Resume replacement
+- Resume download
+- Resume deletion
+- Private resume storage
+- Public user profiles
+- Applicant profile viewing
+- Secure recruiter resume access
+
+### Coming Next
+
+- Saved jobs
+- Job seeker dashboard
+- Company dashboard
+- Laravel Policies
+- Form Requests
+- Improved validation
+- Automated testing
+- Responsive improvements
+- Deployment
 
 ---
 
@@ -49,652 +55,730 @@ The project is being developed incrementally to practice practical full-stack so
 ## Frontend
 
 - Vue 3
-- JavaScript
 - Vue Router
 - Pinia
 - Axios
 - Tailwind CSS
 - Vite
+- Vue Toastification
+- Vue Spinner
 
 ## Backend
 
-- PHP
 - Laravel 12
+- PHP
 - Laravel Sanctum
 - Eloquent ORM
-- RESTful APIs
+- REST API
 
 ## Database
 
-- MySQL 8
-
-## Development Tools
-
-- Git
-- GitHub
-- Visual Studio Code
-- Composer
-- npm
+- MySQL
 
 ---
 
-# Implemented Features
+# Authentication
 
-CareerHub currently includes:
+CareerHub uses Laravel Sanctum SPA authentication.
 
-- Browse available job listings
-- View individual job details
-- Create job listings
-- Edit job listings
-- Delete job listings
-- User registration
-- User login
-- User logout
-- Session-based authentication
-- Laravel Sanctum authentication
-- Persistent authentication after page refresh
-- Job Seeker and Company roles
-- Protected frontend routes
-- Protected API routes
-- Role-aware navigation
-- Company-only job creation
-- Job ownership
-- Owner-only job editing
-- Owner-only job deletion
-- Backend authorization checks
-- Vue + Laravel API integration
-- MySQL database integration
-- Pinia authentication state management
+Authentication is handled using cookies and sessions instead of storing authentication tokens in localStorage.
 
----
+Protected API routes use:
 
-# User Roles
+```php
+auth:sanctum
 
-CareerHub currently supports two account types.
+The authenticated user is retrieved on the backend using:
 
-## Job Seeker
+$request->user()
 
-Job seekers can currently:
+This means ownership information is not trusted from the frontend.
 
-- Create an account
-- Log in
-- Log out
-- Browse jobs
-- View individual job listings
+User Roles
 
-Future phases will allow job seekers to:
+CareerHub currently supports two account roles:
 
-- Apply to jobs
-- Track applications
-- Save jobs
-- Create a profile
-- Upload a CV
+job_seeker
+company
+Job Seeker
 
-## Company
+Job seekers can:
 
-Companies can currently:
+Browse jobs
+Search jobs
+Filter jobs
+Sort jobs
+View job details
+Apply to jobs
+Prevent duplicate applications
+View their applications
+Track application status
+Create a professional profile
+Add a headline
+Add a bio
+Add a location
+Add skills
+Add experience
+Upload a PDF resume
+Replace their resume
+Download their resume
+Delete their resume
+View other CareerHub profiles
+Company
 
-- Create an account
-- Log in
-- Create job listings
-- Edit their own jobs
-- Delete their own jobs
+Companies can:
 
-A company cannot modify a job created by another company.
+Create job listings
+Edit their own jobs
+Delete their own jobs
+View applicants
+Accept applications
+Reject applications
+View candidate profiles
+Download applicant resumes
+Create a company profile
+Add company information
+Add a website
+Job Management
 
----
+Companies can create and manage job listings.
 
-# Authentication & Authorization
+A company can only edit or delete jobs that belong to its authenticated account.
 
-CareerHub uses **Laravel Sanctum** for SPA authentication.
+Job listings currently contain fields such as:
 
-Authentication is handled through Laravel sessions and cookies.
+Title
+Description
+Location
+Job type
+Minimum salary
+Maximum salary
+Currency
+Status
 
-The application currently uses three layers of access control.
+Ownership is checked on the Laravel backend.
 
-### Authentication
+The frontend never decides whether a company owns a job.
 
-Determines whether the user is logged in.
+Job Discovery
 
-```text
-Guest
-  |
-  v
-Login
-  |
-  v
-Authenticated User
-```
+CareerHub includes a job discovery system with:
 
-### Role Authorization
+Search by title
+Filter by location
+Filter by job type
+Sort by newest
+Sort by oldest
+Sort by lowest salary
+Sort by highest salary
+Pagination
 
-Determines which type of account is logged in.
+Example request:
 
-```text
+GET /api/jobs?search=Laravel&location=Beirut&type=Full-Time&sort=salary_high&page=1
+
+Laravel builds the database query based on the query parameters and returns paginated results.
+
+The frontend receives values such as:
+
+data
+current_page
+last_page
+total
+
+and uses them to render the job list and pagination controls.
+
+Applications
+
+Job seekers can apply to available jobs.
+
+Each application connects:
+
 User
- |
- +---- Job Seeker
- |
- +---- Company
-```
-
-### Ownership Authorization
-
-A company can only modify jobs that belong to that company.
-
-```text
-Company A
-   |
-   v
-Creates Job #5
-   |
-   v
-job_listings.user_id = Company A ID
-   |
-   v
-Company A can edit/delete Job #5
-```
-
-If another company tries to modify the same job:
-
-```text
-Company B
-   |
-   v
-PUT /api/jobs/5
-   |
-   v
-403 Forbidden
-```
-
-The Laravel backend performs the final authorization checks.
-
----
-
-# Current Database Relationships
-
-The main relationship currently implemented is:
-
-```text
-User
- |
- | hasMany
- v
+  ↓
+Application
+  ↓
 JobListing
-```
+
+Application statuses currently include:
+
+pending
+accepted
+rejected
+
+Duplicate applications are prevented using both application logic and a database uniqueness constraint.
+
+Companies can only manage applications belonging to jobs they own.
+
+Profiles
+
+Each user can have one profile.
+
+Relationship:
+
+User
+  ↓ hasOne
+Profile
 
 And:
 
-```text
-JobListing
- |
- | belongsTo
- v
+Profile
+  ↓ belongsTo
 User
-```
 
-Each company-owned job stores its creator through:
+Common profile fields include:
 
-```text
-job_listings.user_id
-```
+Bio
+Location
 
-Older jobs may temporarily contain:
+Job seeker profile fields include:
 
-```text
-user_id = NULL
-```
+Headline
+Skills
+Experience
+Resume
 
-because job ownership was introduced after the first job records were created.
+Company profile fields include:
 
-More relationships will be introduced as development continues.
+Company name
+Website
 
----
+The backend determines which fields are allowed based on the authenticated user's role.
 
-# API Overview
+Role-Specific Profiles
 
-## Public Authentication Routes
+The frontend displays different profile fields depending on the user role.
 
-```http
-POST /api/register
-POST /api/login
-```
+A job seeker sees:
 
-## Public Job Routes
+Headline
+Location
+Bio
+Skills
+Experience
+Resume
 
-```http
-GET /api/jobs
-GET /api/jobs/{id}
-```
+A company sees:
 
-## Authenticated Routes
+Location
+Bio
+Company Name
+Website
 
-```http
-GET  /api/user
-POST /api/logout
-```
+The frontend controls what the user sees.
 
-## Protected Job Management
+The backend controls what the user is actually allowed to update.
 
-```http
-POST   /api/jobs
-PUT    /api/jobs/{id}
-DELETE /api/jobs/{id}
-```
+This means hiding a field in Vue is not treated as security.
 
-Job creation is restricted to company accounts.
+Resume Management
 
-Job updates and deletion also require the authenticated company to own the requested job.
+Job seekers can manage their resume from their profile.
 
----
+Supported actions:
 
-# Project Structure
+Upload
+Replace
+Download
+Delete
 
-```text
-CareerHub/
-|
-|-- backend/
-|   |
-|   |-- app/
-|   |   |-- Http/
-|   |   |   `-- Controllers/
-|   |   |
-|   |   `-- Models/
-|   |
-|   |-- database/
-|   |   `-- migrations/
-|   |
-|   `-- routes/
-|       `-- api.php
-|
-|-- frontend/
-|   |
-|   `-- src/
-|       |-- components/
-|       |-- router/
-|       |-- stores/
-|       `-- views/
-|
-`-- README.md
-```
+Resume validation currently requires:
 
-The frontend and backend are separated.
+PDF format
+Maximum file size: 5 MB
 
-Vue communicates with Laravel using HTTP requests through Axios.
+The resume is sent from Vue using:
 
----
+File
+↓
+FormData
+↓
+Axios
+↓
+Laravel
 
-# Development Roadmap
+Laravel validates the uploaded file and stores it privately.
 
-## Phase 1 — Project Foundation
+The database stores:
 
-- [x] Create Vue frontend
-- [x] Create Laravel backend
-- [x] Configure MySQL
-- [x] Connect Laravel to MySQL
-- [x] Connect Vue frontend to Laravel API
-- [x] Create Git repository
-- [x] Connect project to GitHub
-- [x] Establish frontend/backend project structure
-- [x] Display job listings
-- [x] Display individual job details
+resume_path
+resume_original_name
 
----
+The internal storage path is hidden from API responses.
 
-## Phase 2 — Job Management
+The original file name can still be displayed to the user.
 
-- [x] Create `job_listings` database table
-- [x] Create JobListing model
-- [x] Build job listing API
-- [x] Complete job creation
-- [x] Complete job editing
-- [x] Complete job deletion
-- [x] Connect Vue forms to Laravel
-- [x] Add backend validation
-- [x] Handle API errors
-- [x] Display loading states
+Private Resume Storage
 
----
+Resumes are not exposed directly through a public storage URL.
 
-## Phase 3 — Authentication
+Instead, Laravel serves them through authenticated API routes.
 
-- [x] Install Laravel Sanctum
-- [x] Configure SPA authentication
-- [x] User registration
-- [x] User login
-- [x] User logout
-- [x] Authentication Pinia store
-- [x] Restore user session after page refresh
-- [x] Protected frontend routes
-- [x] Protected API routes
-- [x] CSRF protection
-- [x] Authentication-aware navigation
+This makes it possible to perform authorization before returning the file.
 
----
+The flow is:
 
-## Phase 4 — Roles & Authorization
+Authenticated request
+        ↓
+Authorization
+        ↓
+Private storage
+        ↓
+PDF response
+Secure Recruiter Resume Access
 
-- [x] Add user role column
-- [x] Job Seeker accounts
-- [x] Company accounts
-- [x] Role selection during registration
-- [x] Role-aware frontend interface
-- [x] Restrict job creation to companies
-- [x] Add `user_id` to job listings
-- [x] User `hasMany` JobListing relationship
-- [x] JobListing `belongsTo` User relationship
-- [x] Automatically assign job ownership
-- [x] Owner-only job editing
-- [x] Owner-only job deletion
-- [x] Reject unauthorized company modifications with `403 Forbidden`
-- [ ] Replace repeated authorization checks with Laravel Policies
+Companies can download the resume of an applicant only when that applicant applied to one of the company's own jobs.
 
----
+Endpoint:
 
-## Phase 5 — Job Applications
+GET /api/applications/{id}/resume
 
-**Current next phase**
+Authorization flow:
 
-- [ ] Create `applications` database table
-- [ ] Create Application model
-- [ ] Link applications to job seekers
-- [ ] Link applications to job listings
-- [ ] Add Eloquent relationships
-- [ ] Allow job seekers to apply
-- [ ] Prevent companies from applying
-- [ ] Prevent duplicate applications
-- [ ] Allow job seekers to view their applications
-- [ ] Allow companies to view applicants
-- [ ] Add application statuses
-- [ ] Allow companies to update application status
-- [ ] Protect application routes with authorization
+Authenticated user
+        ↓
+Is the user a company?
+        ↓
+Find Application
+        ↓
+Find related JobListing
+        ↓
+Does the company own this job?
+        ↓
+Find applicant
+        ↓
+Find applicant Profile
+        ↓
+Does the profile have a resume?
+        ↓
+Does the physical PDF exist?
+        ↓
+Download allowed
 
-Planned relationship:
+A company cannot simply guess a user ID and download that user's resume.
 
-```text
-Job Seeker
-    |
-    v
+The application establishes the relationship that grants permission.
+
+Public Profiles
+
+Authenticated CareerHub users can view other user profiles.
+
+Endpoint:
+
+GET /api/users/{id}/profile
+
+Job seeker public profiles can display:
+
+Name
+Headline
+Location
+Bio
+Skills
+Experience
+Resume availability
+
+Company public profiles can display:
+
+Account name
+Location
+Bio
+Company name
+Website
+
+The public profile API explicitly selects which profile fields should be returned instead of exposing the entire database model.
+
+Main API Routes
+Authentication
+POST   /api/register
+POST   /api/login
+POST   /api/logout
+GET    /api/user
+Jobs
+GET     /api/jobs
+GET     /api/jobs/{id}
+POST    /api/jobs
+PUT     /api/jobs/{id}
+DELETE  /api/jobs/{id}
+Job Seeker Applications
+GET    /api/applications
+POST   /api/jobs/{id}/applications
+GET    /api/jobs/{id}/application-status
+Company Applicant Management
+GET     /api/jobs/{id}/applications
+PATCH   /api/applications/{id}/status
+GET     /api/applications/{id}/resume
+Profile
+GET    /api/profile
+PATCH  /api/profile
+Resume
+POST    /api/profile/resume
+GET     /api/profile/resume
+DELETE  /api/profile/resume
+Public Profiles
+GET /api/users/{id}/profile
+Main Database Relationships
+User
+├── hasMany JobListings
+├── hasMany Applications
+└── hasOne Profile
+JobListing
+├── belongsTo User
+└── hasMany Applications
 Application
-    |
-    v
-Job Listing
-    |
-    v
-Company
-```
+├── belongsTo User
+└── belongsTo JobListing
+Profile
+└── belongsTo User
+Full Request Flow
 
----
+A typical CareerHub request follows this structure:
 
-## Phase 6 — Job Discovery
+User action
+    ↓
+Vue component
+    ↓
+Frontend function
+    ↓
+Axios
+    ↓
+Laravel API route
+    ↓
+Authentication middleware
+    ↓
+Validation
+    ↓
+Authorization
+    ↓
+Controller
+    ↓
+Eloquent model / relationships
+    ↓
+MySQL
+    ↓
+JSON or file response
+    ↓
+Axios
+    ↓
+Vue state
+    ↓
+UI rerender
 
-- [ ] Job search
-- [ ] Search by title
-- [ ] Search by location
-- [ ] Filter by job type
-- [ ] Filter by salary
-- [ ] Sorting
-- [ ] Pagination
-- [ ] Improved empty states
-- [ ] Search result count
+Different types of request data are used for different purposes.
 
----
+Example:
 
-## Phase 7 — Profiles
+/api/jobs/5
 
-### Job Seeker Profile
+The 5 is a route parameter identifying a resource.
 
-- [ ] Personal information
-- [ ] Skills
-- [ ] Experience
-- [ ] Profile editing
-- [ ] CV upload
-- [ ] CV download
+Example:
 
-### Company Profile
+?search=Laravel&location=Beirut
 
-- [ ] Company name
-- [ ] Company description
-- [ ] Location
-- [ ] Website
-- [ ] Company profile page
-- [ ] Display company details on job listings
+These are query parameters used for searching and filtering.
 
----
+Example:
 
-## Phase 8 — Saved Jobs
+{
+  "status": "accepted"
+}
 
-- [ ] Create saved jobs relationship
-- [ ] Save a job
-- [ ] Remove saved job
-- [ ] View saved jobs
-- [ ] Prevent duplicate saved jobs
+This is request-body data used to modify a resource.
 
----
+The authenticated actor comes from:
 
-## Phase 9 — Dashboards
+$request->user()
+Project Structure
+CareerHub/
+│
+├── backend/
+│   │
+│   ├── app/
+│   │   ├── Http/
+│   │   │   └── Controllers/
+│   │   │       └── Api/
+│   │   │
+│   │   └── Models/
+│   │
+│   ├── database/
+│   │   └── migrations/
+│   │
+│   └── routes/
+│       └── api.php
+│
+└── frontend/
+    │
+    └── src/
+        ├── components/
+        ├── router/
+        ├── stores/
+        └── views/
+Important Frontend Views
 
-### Job Seeker Dashboard
+Current important Vue views include:
 
-- [ ] Application overview
-- [ ] Application statuses
-- [ ] Saved jobs
-- [ ] Profile completion
+JobsView.vue
+JobView.vue
+MyApplicationsView.vue
+ApplicantsView.vue
+ProfileView.vue
+PublicProfileView.vue
 
-### Company Dashboard
+Important reusable components include:
 
-- [ ] Published jobs
-- [ ] Applicant counts
-- [ ] Active jobs
-- [ ] Closed jobs
-- [ ] Application management
-- [ ] Basic statistics
+JobListings.vue
+JobListing.vue
+Navbar.vue
+Security Decisions
 
----
+CareerHub currently includes several important security rules.
 
-## Phase 10 — Production Quality
+Authentication
 
-- [ ] Laravel Policies
-- [ ] Form Request validation
-- [ ] Improved frontend validation
-- [ ] Improved API error handling
-- [ ] Reusable frontend components
-- [ ] Better loading states
-- [ ] Better empty states
-- [ ] Responsive UI improvements
-- [ ] Backend refactoring
-- [ ] Frontend refactoring
-- [ ] Automated backend tests
-- [ ] Frontend tests
+Protected routes use Laravel Sanctum.
 
----
+Ownership
 
-## Phase 11 — Deployment
+The backend derives ownership from:
 
-- [ ] Production environment configuration
-- [ ] Deploy Vue frontend
-- [ ] Deploy Laravel backend
-- [ ] Deploy MySQL database
-- [ ] Configure production environment variables
-- [ ] Configure HTTPS
-- [ ] Security review
-- [ ] Add project screenshots
-- [ ] Add live demo link
-- [ ] Final README cleanup
+$request->user()
 
----
+The frontend does not provide trusted ownership IDs.
 
-# Current Progress
+Job Ownership
 
-```text
-Phase 1  Project Foundation       COMPLETE
-Phase 2  Job Management          COMPLETE
-Phase 3  Authentication          COMPLETE
-Phase 4  Roles & Authorization   COMPLETE
-Phase 5  Job Applications        NEXT
-Phase 6  Job Discovery           PLANNED
-Phase 7  Profiles                PLANNED
-Phase 8  Saved Jobs              PLANNED
-Phase 9  Dashboards              PLANNED
-Phase 10 Production Quality      PLANNED
-Phase 11 Deployment              PLANNED
-```
+Companies can only modify jobs belonging to their account.
 
-The only remaining item intentionally left open in Phase 4 is migrating the current authorization logic to Laravel Policies.
+Application Authorization
 
-That refactor can be introduced later after the core application features are implemented.
+Companies can only manage applications for jobs they own.
 
----
+Role Authorization
 
-# Local Development Setup
+Job seekers cannot perform company-only actions.
 
-## Requirements
+Companies cannot perform job-seeker-only actions.
 
-Make sure the following are installed:
+Resume Privacy
 
-- PHP 8.2+
-- Composer
-- Node.js
-- npm
-- MySQL 8
-- Git
+Resume files are stored privately.
 
----
+Internal file paths are not exposed to the frontend.
 
-## Clone the Repository
+Recruiter Resume Access
 
-```bash
-git clone https://github.com/myehya812/CareerHub.git
-cd CareerHub
-```
+Companies must own the job connected to an application before downloading that applicant's resume.
 
----
+Running CareerHub
+Requirements
 
-## Backend Setup
+Install:
 
-Enter the Laravel project:
+PHP
+Composer
+Node.js
+npm
+MySQL
+Backend Setup
 
-```bash
+Enter the backend directory:
+
 cd backend
-```
 
 Install dependencies:
 
-```bash
 composer install
-```
 
 Create the environment file:
 
-```bash
-copy .env.example .env
-```
+cp .env.example .env
 
-Generate the Laravel application key:
+Generate an application key:
 
-```bash
 php artisan key:generate
-```
 
-Create a MySQL database:
-
-```text
-careerhub
-```
-
-Configure the database inside `.env`:
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=careerhub
-DB_USERNAME=your_mysql_user
-DB_PASSWORD=your_mysql_password
-```
+Configure the MySQL database inside .env.
 
 Run migrations:
 
-```bash
 php artisan migrate
-```
 
 Start Laravel:
 
-```bash
 php artisan serve
-```
 
-Default backend URL:
+Backend default URL:
 
-```text
 http://127.0.0.1:8000
-```
+Frontend Setup
 
----
+Open another terminal:
 
-## Frontend Setup
-
-Open another terminal and enter:
-
-```bash
 cd frontend
-```
 
 Install dependencies:
 
-```bash
 npm install
-```
 
-Run the development server:
+Start Vite:
 
-```bash
 npm run dev
-```
 
-Default frontend URL:
+Frontend URL:
 
-```text
 http://localhost:3000
-```
+Production Build
 
----
+Build the frontend using:
 
-# Learning Goals
+cd frontend
+npm run build
 
-CareerHub is being developed as a practical full-stack software engineering project.
+The current Phase 7 frontend successfully builds using Vite.
 
-The main goals are to gain experience with:
+Development Roadmap
+Phase 1  — Foundation                         ✅
+Phase 2  — Job CRUD                           ✅
+Phase 3  — Authentication                     ✅
+Phase 4  — Roles & Authorization              ✅
+Phase 5  — Applications                       ✅
+Phase 6  — Job Discovery                      ✅
+Phase 7  — Profiles & Resume Management       ✅
 
-- Building REST APIs
-- Designing relational databases
-- Vue component architecture
-- Vue Router
-- Pinia state management
-- Axios
-- Laravel controllers
-- Eloquent models and relationships
-- Database migrations
-- Authentication
-- Authorization
-- Resource ownership
-- HTTP status codes
-- Validation
-- Error handling
-- Git workflows
-- Debugging full-stack applications
+Phase 8  — Saved Jobs                         ⏳
+Phase 9  — Dashboards                         ⏳
+Phase 10 — Production Quality                 ⏳
+Phase 11 — Deployment                         ⏳
+Phase 7 Completed Features
 
-The project is developed feature-by-feature so that each part of the architecture can be understood, implemented, tested, and improved before moving to the next phase.
+Phase 7 introduced the profile system.
 
----
+Completed work includes:
 
-# Project Status
+Profile database and relationships
+        ↓
+Own profile API
+        ↓
+Role-specific profile fields
+        ↓
+Job seeker profiles
+        ↓
+Company profiles
+        ↓
+Private resume storage
+        ↓
+Resume upload
+        ↓
+Resume replacement
+        ↓
+Resume download
+        ↓
+Resume deletion
+        ↓
+Public profiles
+        ↓
+Applicant profile navigation
+        ↓
+Authorized recruiter resume downloads
+Learning Goals
 
-CareerHub is currently under active development.
+CareerHub is being developed as a practical software-engineering project.
 
-The foundation, job management system, authentication system, user roles, and job ownership system are complete.
+The project is being used to understand:
 
-The next major development milestone is:
+HTML and frontend structure
+Vue components
+Vue reactivity
+Vue Router
+Pinia
+Axios
+REST APIs
+HTTP methods
+Request parameters
+Query parameters
+Request bodies
+Authentication
+Authorization
+Laravel controllers
+Laravel routing
+Validation
+Eloquent ORM
+Database migrations
+Database relationships
+File uploads
+FormData
+Private file storage
+Binary file responses
+Browser Blobs
+Error handling
+Role-based interfaces
+Git workflows
+Full-stack debugging
+Application architecture
 
-**Phase 5 — Job Applications**
+The goal is not simply to finish CareerHub.
+
+The goal is to understand the project well enough to eventually design and build another full-stack application independently.
+
+Current Learning Progress
+
+The project now includes several complete end-to-end flows.
+
+Example:
+
+Company clicks Download CV
+        ↓
+Vue receives application object
+        ↓
+application.id
+        ↓
+Axios GET request
+        ↓
+Laravel API route
+        ↓
+Sanctum authentication
+        ↓
+ApplicationController
+        ↓
+Company role check
+        ↓
+Application relationship
+        ↓
+Job ownership check
+        ↓
+Applicant relationship
+        ↓
+Profile relationship
+        ↓
+Private resume storage
+        ↓
+PDF response
+        ↓
+Axios Blob
+        ↓
+Browser download
+
+Understanding flows like this is one of the main goals of the project.
+
+Future Improvements
+
+Planned improvements include:
+
+Saved jobs
+Job seeker dashboard
+Company dashboard
+Better reusable Vue components
+Laravel Policies
+Form Request validation
+Automated backend tests
+Frontend testing
+Better validation messages
+Better error pages
+Responsive improvements
+Loading and empty states
+Improved accessibility
+Deployment
+Production configuration
+License
+
+CareerHub is currently being developed for learning and portfolio purposes.
