@@ -30,9 +30,9 @@ const state = reactive({
 
 
   currentPage: 1,
-  lastPage:1,
-  total:0,
-  
+  lastPage: 1,
+  total: 0,
+
 });
 
 const fetchJobs = async (page = 1) => {
@@ -84,31 +84,17 @@ onMounted(fetchJobs);
       </div>
 
       <!-- Search and discovery filters -->
-      <form
-        v-if="showSearch"
-        @submit.prevent="fetchJobs(1)"
-        class="mx-auto mb-10 max-w-4xl"
-      >
+      <form v-if="showSearch" @submit.prevent="fetchJobs(1)" class="mx-auto mb-10 max-w-4xl">
         <div class="grid gap-3 md:grid-cols-4">
 
-          <input
-            v-model="state.searchTerm"
-            type="text"
-            placeholder="Search jobs..."
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500"
-          />
+          <input v-model="state.searchTerm" type="text" placeholder="Search jobs..."
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500" />
 
-          <input
-            v-model="state.location"
-            type="text"
-            placeholder="Location..."
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500"
-          />
+          <input v-model="state.location" type="text" placeholder="Location..."
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500" />
 
-          <select
-            v-model="state.type"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500"
-          >
+          <select v-model="state.type"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500">
             <option value="">
               All Job Types
             </option>
@@ -130,11 +116,8 @@ onMounted(fetchJobs);
             </option>
           </select>
 
-          <select
-            v-model="state.sort"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none 
-            transition focus:border-indigo-500"
-          >
+          <select v-model="state.sort" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none 
+            transition focus:border-indigo-500">
             <option value="newest">
               Newest
             </option>
@@ -155,74 +138,60 @@ onMounted(fetchJobs);
         </div>
 
         <div class="mt-4 text-center">
-          <button
-            type="submit"
-            class="rounded-xl bg-indigo-600 px-8 py-3 font-semibold text-white transition hover:bg-indigo-700"
-          >
+          <button type="submit"
+            class="rounded-xl bg-indigo-600 px-8 py-3 font-semibold text-white transition hover:bg-indigo-700">
             Search Jobs
           </button>
         </div>
       </form>
 
 
-      <p class="mb-6 text-sm font-medium text-slate-600" v-if="showSearch && !state.isLoading" > {{ state.total }} {{ state.total === 1 ? 'job' : 'jobs' }} found</p>
+      <p class="mb-6 text-sm font-medium text-slate-600" v-if="showSearch && !state.isLoading"> {{ state.total }} {{
+        state.total === 1 ? 'job' : 'jobs' }} found</p>
 
       <!-- Laravel request is still running -->
-      <div
-        v-if="state.isLoading"
-        class="flex justify-center py-12"
-      >
+      <div v-if="state.isLoading" class="flex justify-center py-12">
         <PulseLoader color="#4F46E5" />
       </div>
 
       <!-- Jobs returned by Laravel -->
-      <div v-else-if="state.jobs.length === 0" 
-      class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+      <div v-else-if="state.jobs.length === 0"
+        class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
 
-      <h3 class="text-lg font-semibold text-slate-900">
-        No jobs found
-      </h3>
+        <h3 class="text-lg font-semibold text-slate-900">
+          No jobs found
+        </h3>
 
-      <p class="mt-2 text-slate-500">
-         Try changing your search or filters.
-      </p>
-    </div>
+        <p class="mt-2 text-slate-500">
+          Try changing your search or filters.
+        </p>
+      </div>
 
-    <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ">
+      <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ">
 
-      <JobListing v-for="job in state.jobs.slice(0 , limit || state.jobs.length)"
-      :key="job.id"
-      :job="job" />
-    </div>
+        <JobListing v-for="job in state.jobs.slice(0, limit || state.jobs.length)" :key="job.id" :job="job" />
+      </div>
 
 
-        <div v-if="showSearch && state.lastPage && !state.isLoading > 1" 
-          class="mt-10 flex items-center justify-center gap-4" >
-          <button @click="fetchJobs(state.currentPage - 1)"
-          :disabled="state.currentPage ===  1"
+      <div v-if="showSearch && state.lastPage > 1 && !state.isLoading"
+        class="mt-10 flex items-center justify-center gap-4">
+       
+        <button @click="fetchJobs(state.currentPage - 1)" :disabled="state.currentPage === 1"
           class="rounded-xl border border-slate-300 bg-white px-5 py-2 font-semibold text-slate-700 transition
-           hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 "
-          >Previous</button>
-          <span>
-            Page {{ state.currentPage }} of {{ state.lastPage }}
-          </span>
+           hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 ">Previous</button>
+        <span>
+          Page {{ state.currentPage }} of {{ state.lastPage }}
+        </span>
 
-          <button @click="fetchJobs(state.currentPage + 1)"
-          :disabled ="state.currentPage === state.lastPage" 
-          class="rounded-xl border border-slate-300 bg-white px-5 py-2 font-semibold text-slate-700 transition
-           hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50" >
-        
-        Next</button>
-        </div>
+        <button @click="fetchJobs(state.currentPage + 1)" :disabled="state.currentPage === state.lastPage" class="rounded-xl border border-slate-300 bg-white px-5 py-2 font-semibold text-slate-700 transition
+           hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50">
 
-      <div
-        v-if="showButton"
-        class="mt-10 text-center"
-      >
-        <RouterLink
-          to="/jobs"
-          class="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600"
-        >
+          Next</button>
+      </div>
+
+      <div v-if="showButton" class="mt-10 text-center">
+        <RouterLink to="/jobs"
+          class="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600">
           Explore All Jobs →
         </RouterLink>
       </div>
@@ -230,4 +199,3 @@ onMounted(fetchJobs);
     </div>
   </section>
 </template>
-

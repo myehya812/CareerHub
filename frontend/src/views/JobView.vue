@@ -16,6 +16,10 @@ const auth = useAuthStore();
 const jobId = route.params.id;
 const isApplying = ref(false);
 const hasApplied = ref(false);
+const isSaved = ref(false);
+const isCheckingSaved = ref(false);
+const isUpdatingSaved = ref(false);
+const saveStatusError = ref(false);
 
 const state = reactive({
   job: {},
@@ -73,16 +77,109 @@ const checkApplicationStatus = async () => {
   if (!auth.isAuthenticated || auth.user?.role !== 'job_seeker') {
     return;
   } try {
-    const response = await axios.get(`/api/jobs/${jobId}/application status:`,);
+    const response = await axios.get(`/api/jobs/${jobId}/application-status`,);
 
     hasApplied.value = response.data.has_applied;
 
 
   } catch (error) {
-    console.error('console.error("Error checking application status:", error);')
+    console.error('console.error("Error checking application status", error);')
   }
 
 };
+
+
+const checkSaveStatus = async () => {
+  if (!auth.isAuthenticated || auth.user?.role !== "job_seeker") {
+    return;
+  }
+
+  isCheckingSaved.value = true;
+  saveStatusError.value = false
+
+  try {
+    const response = await axios.get(`/api/jobs/${jobId}/save-status`,);
+
+    isSaved.value = response.data.is_saved === true;
+  } catch (error) {
+    console.error("Error checking saved job status", error);
+
+    saveStatusError.value = true;
+    toast.error("Could not check saved job status");
+  } finally {
+    isCheckingSaved.value = false;
+  }
+}
+
+  const saveJob = async () => {
+    if (!auth.isAuthenticated || auth.user?.role !== 'job_seeker' || isUpdatingSaved.value) {
+      return;
+    }
+
+    isUpdatingSaved.value = true;
+
+    try {
+      await axios.get("/sanctum/csrf-cookie");
+
+      const response = await axios.post(`/api/jobs/${jobId}/save`);
+
+      isSaved.value = response.data.is_saved === true;
+
+      toast.success(response.data.message);
+
+    } catch (error) {
+      console.error("Error saving jobs:", error);
+
+      if (error.response?.status === 403) {
+        toast.error("You are not allowed to save jobs.");
+      }
+      else if (error.response?.status === 404) {
+        toast.error("This job no longer exists.");
+      } else {
+        toast.error("This job could not be saved");
+      }
+    } finally {
+      isUpdatingSaved.value = false;
+    }
+  };
+
+  const removeSavedJob = async () => {
+    if (
+      !auth.isAuthenticated ||
+      auth.user?.role !== "job_seeker" ||
+      isUpdatingSaved.value
+    ) {
+      return;
+    }
+
+    isUpdatingSaved.value = true;
+
+    try {
+      await axios.get("/sanctum/csrf-cookie");
+
+      const response = await axios.delete(`/api/jobs/${jobId}/save`);
+
+      isSaved.value = response.data.is_saved === true;
+
+      toast.success(response.data.message);
+    } catch (error) {
+      console.error("Error removing saved job:", error);
+
+      if (error.response?.status === 403) {
+        toast.error("You are not allowed to remove this saved job.");
+      } else if (error.response?.status === 404) {
+        toast.error("This job is not saved.");
+        await checkSaveStatus();
+      } else {
+        toast.error("The saved job could not be removed.");
+      }
+    } finally {
+      isUpdatingSaved.value = false;
+    }
+  };
+
+
+
 
 
 onMounted(async () => {
@@ -90,6 +187,7 @@ onMounted(async () => {
     const response = await axios.get(`/api/jobs/${jobId}`);
     state.job = response.data;
     await checkApplicationStatus();
+    await checkSaveStatus();
   } catch (error) {
     console.error("Error fetching job", error);
   } finally {
@@ -189,6 +287,16 @@ const applyToJob = async () => {
             class="mt-5 w-full rounded-xl bg-white px-4 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-70">
             {{ hasApplied ? "Already Applied" : isApplying ? " Applying..." : 'Apply Now' }}
           </button>
+
+          <button v-if="auth.isAuthenticated && auth.user?.role === 'job_seeker'"
+            @click="isSaved ? removeSavedJob() : saveJob()"
+            :disabled="isCheckingSaved || isUpdatingSaved || saveStatusError"
+            class="mt-3 w-full rounded-xl border border-white px-4 py-3 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60">
+
+            {{ isCheckingSaved ? "Checking..." : saveStatusError ? "Save status unavailable" : isUpdatingSaved ?
+              "Updating..." : isSaved ? "Remove Saved Job" : "Save Job" }}
+          </button>
+
         </div>
 
         <!-- Company Card -->
@@ -235,7 +343,3 @@ const applyToJob = async () => {
     <PulseLoader color="#4F46E5" />
   </div>
 </template>
-
-
-
-disabled

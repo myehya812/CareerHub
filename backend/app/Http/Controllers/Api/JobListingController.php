@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 class JobListingController extends Controller
 {
 
+
+         public function show($id)
+       { 
+    $job = JobListing::findOrFail($id);
+
+    return response()->json($job);
+          }
+
+
     public function index(Request $request)
     {
         $search =$request->query('search');  //Look in the URL query parameters for something called search.
