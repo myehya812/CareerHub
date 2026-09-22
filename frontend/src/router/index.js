@@ -32,12 +32,24 @@ const router = createRouter({
       path: '/jobs/add',
       name: 'add-job',
       component: AddJobView,
+
+      meta: {
+        requiresAuth: true,
+        requireRole: 'company',
+      }
+
+
     },
+    
     {
-      path: '/jobs/edit/:id',
-      name: 'edit-job',
-      component: EditJobView,
-    },
+  path: "/jobs/edit/:id",
+  name: "edit-job",
+  component: EditJobView,
+  meta: {
+    requiresAuth: true,
+    requiresRole: "company",
+  },
+},
 
     {
   path: '/connection-test',
@@ -127,6 +139,22 @@ const router = createRouter({
     requiresAuth: true,
   },
 },
+
+
+{
+  path: "/saved-jobs",
+  name: "saved-jobs",
+  component: () => import("@/views/SavedJobsView.vue"),
+  meta: {
+    requiresAuth: true,
+    requiresRole: "job_seeker",
+  },
+},
+
+
+
+
+
 
 
   ],

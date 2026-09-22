@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JobListing extends Model
 {
@@ -23,9 +24,14 @@ public function jobListings()
     return $this->hasMany(JobListing::class);
 }
 
-// Applications submitted by this user
+// $Applications submitted by this user
 public function applications()
 {
     return $this->hasMany(Application::class);
 }
+
+public function savedJobs() : HasMany{
+    return $this->hasMany(SavedJob::class);
+}
+
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\JobListingController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\SavedJobController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,14 +38,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobs/{id}/applications', [ApplicationController::class, 'store']);
     Route::get('/jobs/{id}/application-status', [ApplicationController::class, 'status']);
 
-
+                                                                                                    // nsit aya phase
     // Company applicants
     Route::get('/jobs/{id}/applications', [ApplicationController::class, 'applicants']);
     Route::patch('/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
     Route::get('/applications/{id}/resume', [ApplicationController::class, 'downloadResume']);
 
 
-    // Profile
+    // Profile phase sab3a
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::patch('/profile', [ProfileController::class, 'update']);
 
@@ -53,4 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/profile/resume', [ProfileController::class, 'deleteResume']);
 
     Route::get('/users/{id}/profile', [ProfileController::class, 'publicShow']);
+
+
+    //saved jobs phase 8
+    Route::post('/jobs/{id}/save', [SavedJobController::class , 'store']);
+    Route::get('/jobs/{id}/save-status', [SavedJobController::class , 'status']);
+    Route::delete('/jobs/{id}/save' , [SavedJobController::class , 'destroy']);
+    Route::get('/saved-jobs' , [SavedJobController::class , 'index']);
 });
