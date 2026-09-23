@@ -35,7 +35,7 @@ const router = createRouter({
 
       meta: {
         requiresAuth: true,
-        requireRole: 'company',
+        requiresRole: 'company',
       }
 
 
@@ -58,11 +58,7 @@ const router = createRouter({
 },
 
 
-    {
-      path: '/:catchAll(.*)',
-      name: 'not-found',
-      component: NotFoundView,
-    },
+   
 
     {
   path: '/login',
@@ -77,26 +73,7 @@ const router = createRouter({
 },
 
 
-{
-  path: '/jobs/add',
-  name: 'add-job',
-  component: AddJobView,
 
-  meta: {
-    requiresAuth:true,
-    requiresRole:'company'
-  },
-},
-
-{
-  path: '/jobs/edit/:id',
-  name: 'edit-job',
-  component: EditJobView,
-
-  meta: {
-    requiresAuth:true,
-  },
-},
 
 
 {
@@ -151,9 +128,22 @@ const router = createRouter({
   },
 },
 
+{
+  path: "/dashboard",
+  name: "dashboard",
+  component: () => import("@/views/DashboardView.vue"),
+  meta: {
+    requiresAuth: true,
+  },
+},
 
 
 
+ {
+      path: '/:catchAll(.*)',
+      name: 'not-found',
+      component: NotFoundView,
+    },
 
 
 

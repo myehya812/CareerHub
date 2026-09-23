@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\JobListingController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SavedJobController;
@@ -61,4 +62,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/jobs/{id}/save-status', [SavedJobController::class , 'status']);
     Route::delete('/jobs/{id}/save' , [SavedJobController::class , 'destroy']);
     Route::get('/saved-jobs' , [SavedJobController::class , 'index']);
+
+    //Job Dashbaord
+    Route::get('/dashboard/job-seeker', [DashboardController::class , 'jobSeeker']);
+
+    Route::get('dashboard/company' , [DashboardController::class , 'company']);
 });
