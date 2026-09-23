@@ -64,6 +64,16 @@ async function handleLogout() {
             Find Jobs
           </RouterLink>
 
+          <RouterLink v-if="auth.isAuthenticated" to="/dashboard" :class="[
+            isActiveLink('/dashboard')
+              ? 'bg-indigo-50 text-indigo-700'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+
+            'rounded-lg px-4 py-2 font-medium transition',
+          ]">
+            Dashboard
+          </RouterLink>
+
           <RouterLink v-if="auth.isAuthenticated && auth.user?.role === 'job_seeker'" to="/applications" :class="[
             isActiveLink('/applications')
               ? 'bg-indigo-50 text-indigo-700'
@@ -74,15 +84,13 @@ async function handleLogout() {
             My Applications
           </RouterLink>
 
-            <RouterLink v-if="auth.isAuthenticated && auth.user?.role === 'job_seeker'"
-            to="/saved-jobs"
-            :class="[
-              isActiveLink('/saved-jobs')
-      ? 'bg-indigo-50 text-indigo-700'
-      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
-            'rounded-lg px-4 py-2 font-medium transition', ]">
-            
-          
+          <RouterLink v-if="auth.isAuthenticated && auth.user?.role === 'job_seeker'" to="/saved-jobs" :class="[
+            isActiveLink('/saved-jobs')
+              ? 'bg-indigo-50 text-indigo-700'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+            'rounded-lg px-4 py-2 font-medium transition',]">
+
+
             Saved Jobs
           </RouterLink>
 

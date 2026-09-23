@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class JobListing extends Model
 {
     protected $fillable = [
@@ -19,9 +19,10 @@ class JobListing extends Model
     ];
 
     // Jobs posted by this user
-public function jobListings()
+// Company that published this job
+public function user(): BelongsTo
 {
-    return $this->hasMany(JobListing::class);
+    return $this->belongsTo(User::class);
 }
 
 // $Applications submitted by this user
