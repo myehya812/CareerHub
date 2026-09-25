@@ -7,6 +7,7 @@ use App\Http\Requests\StoreJobListingRequest;
 use App\Http\Requests\UpdateJobListingRequest;
 use App\Models\JobListing;
 use Illuminate\Http\Request;
+use App\Http\Resources\JobListingResource;
 
 class JobListingController extends Controller
 {
@@ -14,9 +15,9 @@ class JobListingController extends Controller
 
     public function show($id)
     {
-        $job = JobListing::findOrFail($id);
+        $job = JobListing::with('user')->findOrFail($id);
 
-        return response()->json($job);
+        return new JobListingResource($job);
     }
 
 
@@ -27,7 +28,7 @@ class JobListingController extends Controller
         $type = $request->query('type');
         $sort = $request->query('sort', 'newest');
 
-        $query = JobListing::query();
+        $query = JobListing::with('user');
 
         if ($search) {
             $query->where('title', 'like', "%{$search}%");
@@ -63,7 +64,7 @@ class JobListingController extends Controller
 
         $jobs = $query->paginate(6);
 
-        return response()->json($jobs);
+        return JobListingResource::collection($jobs);
     }
 
 
@@ -79,7 +80,7 @@ class JobListingController extends Controller
         $job = $request->user()->jobListings()->create($validated);
 
 
-        return response()->json($job, 201);
+        return new JobListingResource($job);
     }
 
     public function update(UpdateJobListingRequest $request, int $id)
@@ -94,7 +95,7 @@ class JobListingController extends Controller
 
         $job->update($validated);
 
-        return response()->json($job);
+        return new JobListingResource($job);
     }
 
     public function destroy($id)
