@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\ApplicationResource;
 use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\JobListing;
@@ -38,7 +39,9 @@ class ApplicationController extends Controller
 
         return response()->json([
             'message' => 'Application submitted successfully.',
-            'application' => $application,
+            'application' => new ApplicationResource(
+                $application->load(['user', 'jobListing'])
+            ),
         ], 201);
     }
 
@@ -78,7 +81,7 @@ class ApplicationController extends Controller
             ->latest()
             ->get();
 
-        return response()->json($applications);
+        return ApplicationResource::collection($applications);
     }
 
     public function applicants(Request $request, $id)
@@ -100,11 +103,11 @@ class ApplicationController extends Controller
         }
 
         $applications = $job->applications()
-            ->with('user')
+            ->with('user', 'jobListing')
             ->latest()
             ->get();
 
-        return response()->json($applications);
+        return ApplicationResource::collection($applications);
     }
 
     public function updateStatus(Request $request, $id)
@@ -134,58 +137,59 @@ class ApplicationController extends Controller
 
         return response()->json([
             'message' => 'Application status updated successfully.',
-            'application' => $application,
+            'application' => new ApplicationResource(
+                $application->load(['user', 'jobListing'])
+            ),
         ]);
     }
 
-    public function downloadResume(Request $request , $id){
+    public function downloadResume(Request $request, $id)
+    {
 
         $user = $request->user();
 
         if ($user->role !== 'company') {
-        return response()->json([
-            'message' => 'Only companies can download applicant resumes.',
-        ], 403);
-    }
+            return response()->json([
+                'message' => 'Only companies can download applicant resumes.',
+            ], 403);
+        }
 
-         $application = Application::with([
-        'jobListing',
-        'user.profile',
-    ])->findOrFail($id);
-
-
-         if ($application->jobListing->user_id !== $user->id) {
-        return response()->json([
-            'message' => 'You are not allowed to access this resume.',
-        ], 403);
-    }
+        $application = Application::with([
+            'jobListing',
+            'user.profile',
+        ])->findOrFail($id);
 
 
-           $profile = $application->user->profile;
-
-            if (!$profile || !$profile->resume_path) {
-        return response()->json([
-            'message' => 'This applicant has not uploaded a resume.',
-        ], 404);
-    }
+        if ($application->jobListing->user_id !== $user->id) {
+            return response()->json([
+                'message' => 'You are not allowed to access this resume.',
+            ], 403);
+        }
 
 
+        $profile = $application->user->profile;
 
-     if (!Storage::disk('local')->exists($profile->resume_path)) {
-        return response()->json([
-            'message' => 'Resume file could not be found.',
-        ], 404);
-    }
+        if (!$profile || !$profile->resume_path) {
+            return response()->json([
+                'message' => 'This applicant has not uploaded a resume.',
+            ], 404);
+        }
+
+
+
+        if (!Storage::disk('local')->exists($profile->resume_path)) {
+            return response()->json([
+                'message' => 'Resume file could not be found.',
+            ], 404);
+        }
 
         $filePath = Storage::disk('local')->path(
-        $profile->resume_path
-    );
+            $profile->resume_path
+        );
 
-    return response()->download(
-        $filePath,
-        $profile->resume_original_name ?? 'resume.pdf'
-    );
-
+        return response()->download(
+            $filePath,
+            $profile->resume_original_name ?? 'resume.pdf'
+        );
     }
-
 }

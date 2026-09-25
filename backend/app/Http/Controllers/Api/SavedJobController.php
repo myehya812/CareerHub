@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\JobListing;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
+use App\Http\Resources\SavedJobResource;
 
 class SavedJobController extends Controller
 {
@@ -94,9 +95,7 @@ class SavedJobController extends Controller
 
         $savedJobs = $user->savedJobs()->with('jobListing')->latest()->get();
 
-        return response()->json([
-            'saved_jobs'=>$savedJobs,
-        ]);
+        return SavedJobResource::collection($savedJobs);
     }
 
 }

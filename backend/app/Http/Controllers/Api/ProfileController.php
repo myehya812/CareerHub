@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\ProfileResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,9 +15,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        return response()->json([
-            'profile' => $user->profile,
-        ]);
+        return new ProfileResource($user->profile);
     }
 
     public function update(Request $request)
@@ -51,8 +50,8 @@ class ProfileController extends Controller
         );
 
         return response()->json([
-            'message' => 'Profile updated successfully,',
-            'profile' => $profile,
+            'message' => 'Profile updated successfully.',
+            'profile' => new ProfileResource($profile),
         ]);
      
     }
@@ -92,7 +91,7 @@ class ProfileController extends Controller
 
 
     return response() -> json([
-        'message' => 'Resume uploaded successfully',
+        'message' => 'Resume uploaded successfully.',
         'resume_original_name' => $profile->resume_original_name,
     ]);
 
@@ -177,7 +176,6 @@ public function publicShow($id)
 {
     $user = User::with('profile')->findOrFail($id);
 
-    $profile = $user->profile;
 
     return response()->json([
         'user' => [
@@ -186,16 +184,9 @@ public function publicShow($id)
             'role' => $user->role,
         ],
 
-        'profile' => $profile ? [
-            'headline' => $profile->headline,
-            'bio' => $profile->bio,
-            'location' => $profile->location,
-            'skills' => $profile->skills,
-            'experience' => $profile->experience,
-            'company_name' => $profile->company_name,
-            'website' => $profile->website,
-            'resume_original_name' => $profile->resume_original_name,
-        ] : null,
+          'profile' => $user->profile
+            ? new ProfileResource($user->profile)
+            : null,
     ]);
 }
 
