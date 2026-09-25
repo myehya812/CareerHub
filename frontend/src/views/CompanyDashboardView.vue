@@ -21,9 +21,9 @@ const fetchDashboard = async () => {
     try {
         const response = await axios.get("/api/dashboard/company");
 
-        state.stats = response.data.stats;
-        state.recentJobs = response.data.recent_jobs;
-        state.recentApplications = response.data.recent_applications;
+        state.stats = response.data.data.stats;
+        state.recentJobs = response.data.data.recent_jobs;
+        state.recentApplications = response.data.data.recent_applications;
     } catch (error) {
         console.error("Error fetching company dashboard:", error);
         state.error = "Could not load your dashboard.";
@@ -150,7 +150,7 @@ onMounted(fetchDashboard);
 
                                 <p class="mt-1 break-all text-sm text-slate-500">
                                     Applied for:
-                                    {{ application.job_listing?.title || "Job unavailable" }}
+                                    {{ application.job?.title || "Job unavailable" }}
                                 </p>
 
                                 <span
@@ -160,8 +160,8 @@ onMounted(fetchDashboard);
 
                             </div>
 
-                            <RouterLink v-if="application.job_listing"
-                                :to="`/jobs/${application.job_listing.id}/applicants`"
+                            <RouterLink v-if="application.job"
+                                :to="`/jobs/${application.job.id}/applicants`"
                                 class="shrink-0 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
                                 View Applicants
                             </RouterLink>

@@ -36,7 +36,7 @@ const handleSubmit = async () => {
 
     toast.success('Job published successfully');
 
-    router.push(`/jobs/${response.data.id}`);
+    router.push(`/jobs/${response.data.data.id}`);
   } catch (error) {
     console.error('Error creating job', error);
 

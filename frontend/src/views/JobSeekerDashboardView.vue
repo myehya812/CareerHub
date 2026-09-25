@@ -24,9 +24,9 @@ const fetchDashboard = async () => {
   try {
     const response = await axios.get("/api/dashboard/job-seeker");
 
-    state.stats = response.data.stats;
-    state.recentApplications = response.data.recent_applications;
-    state.recentSavedJobs = response.data.recent_saved_jobs;
+    state.stats = response.data.data.stats;
+    state.recentApplications = response.data.data.recent_applications;
+    state.recentSavedJobs = response.data.data.recent_saved_jobs;
 
   } catch (error) {
     console.error("Error fetching dashboard:", error);
@@ -115,11 +115,11 @@ onMounted(fetchDashboard);
         <div class="min-w-0 flex-1">
 
           <RouterLink
-            v-if="application.job_listing"
-            :to="`/jobs/${application.job_listing.id}`"
+            v-if="application.job"
+            :to="`/jobs/${application.job.id}`"
             class="break-all font-semibold text-slate-900 hover:text-indigo-600"
           >
-            {{ application.job_listing.title }}
+            {{ application.job.title }}
           </RouterLink>
 
           <p v-else class="font-semibold text-slate-500">
@@ -127,7 +127,7 @@ onMounted(fetchDashboard);
           </p>
 
           <p class="mt-1 text-sm text-slate-500">
-            {{ application.job_listing?.location || "Location unavailable" }}
+            {{ application.job?.location || "Location unavailable" }}
           </p>
 
         </div>
@@ -177,11 +177,11 @@ onMounted(fetchDashboard);
       <div class="min-w-0 flex-1">
 
         <RouterLink
-          v-if="savedJob.job_listing"
-          :to="`/jobs/${savedJob.job_listing.id}`"
+          v-if="savedJob.job"
+          :to="`/jobs/${savedJob.job.id}`"
           class="break-all font-semibold text-slate-900 hover:text-indigo-600"
         >
-          {{ savedJob.job_listing.title }}
+          {{ savedJob.job.title }}
         </RouterLink>
 
         <p v-else class="font-semibold text-slate-500">
@@ -189,7 +189,7 @@ onMounted(fetchDashboard);
         </p>
 
         <p class="mt-1 text-sm text-slate-500">
-          {{ savedJob.job_listing?.location || "Location unavailable" }}
+          {{ savedJob.job?.location || "Location unavailable" }}
         </p>
 
       </div>

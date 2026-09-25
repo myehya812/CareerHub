@@ -23,7 +23,7 @@ const fetchSavedJobs = async () => {
     try {
         const response = await axios.get("/api/saved-jobs");
 
-        state.savedJobs = response.data.saved_jobs;
+        state.savedJobs = response.data.data;
     } catch (error) {
         console.error("Error fetching saved jobs:", error);
         toast.error("Could not load saved jobs.");
@@ -43,7 +43,7 @@ const removeSavedJob = async (savedJob) => {
     try {
         await axios.get("/sanctum/csrf-cookie");
 
-        await axios.delete(`/api/jobs/${savedJob.job_listing_id}/save`);
+        await axios.delete(`/api/jobs/${savedJob.job.id}/save`);
 
         state.savedJobs = state.savedJobs.filter(
             (item) => item.id !== savedJob.id,
@@ -114,21 +114,21 @@ onMounted(() => {
             <div v-for="savedJob in state.savedJobs" :key="savedJob.id"
                 class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <span class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
-                    {{ savedJob.job_listing.type }}
+                    {{ savedJob.job.type }}
                 </span>
 
                 <h2 class="mt-4 text-xl font-bold text-slate-900">
-                    {{ savedJob.job_listing.title }}
+                    {{ savedJob.job.title }}
                 </h2>
 
                 <p class="mt-2 text-slate-500">
-                    {{ savedJob.job_listing.location }}
+                    {{ savedJob.job.location }}
                 </p>
 
                 <div class="mt-6 flex flex-wrap gap-3">
 
 
-                    <RouterLink :to="`/jobs/${savedJob.job_listing.id}`"
+                    <RouterLink :to="`/jobs/${savedJob.job.id}`"
                         class="inline-block rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white transition hover:bg-indigo-700">
                         View Job
                     </RouterLink>

@@ -43,7 +43,7 @@ const handleSubmit = async () => {
 
     toast.success('Job updated successfully');
 
-    router.push(`/jobs/${response.data.id}`);
+    router.push(`/jobs/${response.data.data.id}`);
   } catch (error) {
     console.error('Error updating job', error);
 
@@ -55,15 +55,15 @@ onMounted(async () => {
   try {
     const response = await axios.get(`/api/jobs/${jobId}`);
 
-    const job = response.data;
+    const job = response.data.data;
 
     form.title = job.title;
     form.type = job.type;
     form.location = job.location;
     form.description = job.description;
-    form.salary_min = job.salary_min;
-    form.salary_max = job.salary_max;
-    form.currency = job.currency;
+    form.salary_min = job.salary?.min;
+    form.salary_max = job.salary?.max;
+    form.currency = job.salary?.currency ?? 'USD';
     form.status = job.status;
   } catch (error) {
     console.error('Error fetching job', error);

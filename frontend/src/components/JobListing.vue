@@ -22,8 +22,14 @@ const truncatedDescription = computed(() => {
 
 
 const formattedSalary = computed(() => {
-  const min = Number(props.job.salary_min);
-  const max = Number(props.job.salary_max);
+  const salary = props.job.salary;
+
+  if (salary?.min == null || salary?.max == null) {
+    return 'Salary not specified';
+  }
+
+  const min = Number(salary.min);
+  const max = Number(salary.max);
 
   
   if (Number.isNaN(min) || Number.isNaN(max)) {
@@ -35,7 +41,7 @@ const formattedSalary = computed(() => {
   };
 
   
-  return `${props.job.currency} ${formatNumber(min)} - ${formatNumber(max)}`;
+  return `${salary.currency} ${formatNumber(min)} - ${formatNumber(max)}`;
 });
 
 
