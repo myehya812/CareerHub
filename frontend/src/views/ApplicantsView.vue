@@ -71,7 +71,7 @@ onMounted(async () => {
 
     const response = await axios.get(`/api/jobs/${jobId}/applications`);
 
-    state.applications = response.data;
+    state.applications = response.data.data;
   } catch (error) {
     console.error('Error fetching applicants:', error);
   } finally {

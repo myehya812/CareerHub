@@ -27,8 +27,14 @@ const state = reactive({
 });
 
 const formattedSalary = computed(() => {
-  const min = Number(state.job.salary_min);
-  const max = Number(state.job.salary_max);
+  const salary = state.job.salary;
+
+  if (salary?.min == null || salary?.max == null) {
+    return "Salary not specified";
+  }
+
+  const min = Number(salary.min);
+  const max = Number(salary.max);
 
   if (Number.isNaN(min) || Number.isNaN(max)) {
     return "Salary not specified";
@@ -38,14 +44,14 @@ const formattedSalary = computed(() => {
     return new Intl.NumberFormat("en-US").format(value);
   };
 
-  return `${state.job.currency} ${formatNumber(min)} - ${formatNumber(max)}`;
+  return `${salary.currency} ${formatNumber(min)} - ${formatNumber(max)}`;
 });
 
 const isOwner = computed(() => {
   return (
     auth.isAuthenticated &&
     auth.user?.role === "company" &&
-    auth.user?.id === state.job.user_id
+    auth.user?.id === state.job.company?.id
   );
 });
 
@@ -185,7 +191,7 @@ const checkSaveStatus = async () => {
 onMounted(async () => {
   try {
     const response = await axios.get(`/api/jobs/${jobId}`);
-    state.job = response.data;
+    state.job = response.data.data;
     await checkApplicationStatus();
     await checkSaveStatus();
   } catch (error) {

@@ -17,7 +17,7 @@ onMounted(async () => {
     try {
         const response = await axios.get("/api/applications");
 
-        state.applications = response.data;
+        state.applications = response.data.data;
     } catch (error) {
         console.error('Error fetching applications', error);
     } finally {
@@ -61,18 +61,18 @@ const statusClass = (status) => {
 
         <div v-else class="mt-8 space-y-4">
             <RouterLink v-for="application in state.applications" :key="application.id"
-                :to="`/jobs/${application.job_listing.id}`"
+                :to="`/jobs/${application.job.id}`"
                 class="block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-indigo-200 hover:shadow-md">
                 <h2 class="text-xl font-bold text-slate-900">
-                    {{ application.job_listing.title }}
+                    {{ application.job.title }}
                 </h2>
 
                 <p class="mt-2 text-slate-500">
-                    {{ application.job_listing.location }}
+                    {{ application.job.location }}
                 </p>
 
                 <p class="mt-1 text-slate-500">
-                    {{ application.job_listing.type }}
+                    {{ application.job.type }}
                 </p>
 
                 <div class="mt-4">
