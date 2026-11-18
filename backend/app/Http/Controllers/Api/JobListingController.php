@@ -8,14 +8,18 @@ use App\Http\Requests\UpdateJobListingRequest;
 use App\Models\JobListing;
 use Illuminate\Http\Request;
 use App\Http\Resources\JobListingResource;
+use App\Services\RecruitmentTransactions;
 
 class JobListingController extends Controller
 {
 
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $job = JobListing::with('user')->findOrFail($id);
+
+        $viewer = $request->user();
+        abort_if($job->status !== 'active' && ($viewer === null || $viewer->id !== $job->user_id), 404);
 
         return new JobListingResource($job);
     }
@@ -28,7 +32,7 @@ class JobListingController extends Controller
         $type = $request->query('type');
         $sort = $request->query('sort', 'newest');
 
-        $query = JobListing::with('user');
+        $query = JobListing::with('user')->where('status', 'active');
 
         if ($search) {
             $query->where('title', 'like', "%{$search}%");
@@ -68,7 +72,7 @@ class JobListingController extends Controller
     }
 
 
-    public function store(StoreJobListingRequest $request)
+    public function store(StoreJobListingRequest $request, RecruitmentTransactions $transactions)
     {
 
       $this->authorize('create' ,JobListing::class);
@@ -77,10 +81,17 @@ class JobListingController extends Controller
 
 
 
-        $job = $request->user()->jobListings()->create($validated);
+        $result = $transactions->execute('ch_create_job', [
+            $request->user()->id, $validated['title'], $validated['description'],
+            $validated['location'], $validated['type'], $validated['salary_min'] ?? null,
+            $validated['salary_max'] ?? null, $validated['currency'], $validated['status'],
+        ], function () use ($request, $validated) {
+            return ['job_id' => $request->user()->jobListings()->create($validated)->id];
+        });
+        $job = JobListing::findOrFail($result['job_id']);
 
 
-        return new JobListingResource($job);
+        return (new JobListingResource($job))->response()->setStatusCode(201);
     }
 
     public function update(UpdateJobListingRequest $request, int $id)
@@ -98,13 +109,17 @@ class JobListingController extends Controller
         return new JobListingResource($job);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id, RecruitmentTransactions $transactions)
     {
         $job = JobListing::findOrFail($id);
 
         $this->authorize('delete', $job);
 
-        $job->delete();
+        $transactions->execute('ch_delete_job', [$request->user()->id, $job->id], function () use ($job) {
+            $job->delete();
+
+            return ['job_id' => $job->id];
+        });
 
         return response()->noContent();
     }

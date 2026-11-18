@@ -8,10 +8,11 @@ use App\Models\Application;
 use App\Models\JobListing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Services\RecruitmentTransactions;
 
 class ApplicationController extends Controller
 {
-    public function store(Request $request, $id)
+    public function store(Request $request, $id, RecruitmentTransactions $transactions)
     {
         $user = $request->user();
 
@@ -23,19 +24,21 @@ class ApplicationController extends Controller
 
         $job = JobListing::findOrFail($id);
 
-        $alreadyApplied = $user->applications()
-            ->where('job_listing_id', $job->id)
-            ->exists();
-
-        if ($alreadyApplied) {
+        if ($job->status !== 'active') {
             return response()->json([
-                'message' => 'You have already applied to this job.'
+                'message' => 'This job is not accepting applications.'
             ], 409);
         }
 
-        $application = $user->applications()->create([
-            'job_listing_id' => $job->id,
-        ]);
+        $result = $transactions->execute('ch_submit_application', [$user->id, $job->id], function () use ($user, $job) {
+            $application = $user->applications()->firstOrCreate([
+                'job_listing_id' => $job->id,
+            ], ['status' => 'pending']);
+            abort_unless($application->wasRecentlyCreated, 409, 'You have already applied to this job.');
+
+            return ['application_id' => $application->id];
+        });
+        $application = Application::findOrFail($result['application_id']);
 
         return response()->json([
             'message' => 'Application submitted successfully.',
@@ -110,7 +113,7 @@ class ApplicationController extends Controller
         return ApplicationResource::collection($applications);
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, $id, RecruitmentTransactions $transactions)
     {
         $user = $request->user();
 
@@ -133,7 +136,12 @@ class ApplicationController extends Controller
             'status' => 'required|in:pending,accepted,rejected',
         ]);
 
-        $application->update($validated);
+        $transactions->execute('ch_update_application_status', [$user->id, $application->id, $validated['status']], function () use ($application, $validated) {
+            $application->update($validated);
+
+            return ['application_id' => $application->id];
+        });
+        $application->refresh();
 
         return response()->json([
             'message' => 'Application status updated successfully.',
