@@ -189,6 +189,72 @@ The backend runs at **http://127.0.0.1:8000**. Check Vite's terminal output if p
 
 Use separate browser profiles if you want to keep both accounts signed in simultaneously.
 
+## Presentation dataset
+
+The optional dataset recreates the sample companies, job seekers, profiles, vacancies, applications, bookmarks and trigger-generated status history used in the local demonstration. It is stored as fictional fixture data and a Laravel seeder; it contains no personal database dump, application key, session data or local database credentials.
+
+Create an empty presentation database in your MySQL/MariaDB client:
+
+```sql
+CREATE DATABASE careerhub_presentation_2026
+CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+For an existing presentation database, reuse it. In the backend's local `.env`, set `APP_ENV=local` and `DB_DATABASE=careerhub_presentation_2026`, with the correct local database account and password. From `backend`, run:
+
+```bash
+php artisan config:clear
+php artisan migrate
+php artisan db:seed --class=PresentationDemoSeeder
+```
+
+The loader requires MySQL/MariaDB and the exact local presentation database name. It also supports native `_testing` databases while Laravel is in its testing environment. It refuses production environments, including when `--force` is supplied, and is not called by the default `DatabaseSeeder`.
+
+Log in using the complete email address. Every newly created demo account has password **`123456789`**:
+
+| Company login | Job-seeker login |
+| --- | --- |
+| `company1@careerhub.test` | `user1@careerhub.test` |
+| `company2@careerhub.test` | `user2@careerhub.test` |
+| `company3@careerhub.test` | `user3@careerhub.test` |
+| `company4@careerhub.test` | `user4@careerhub.test` |
+| `company5@careerhub.test` | `user5@careerhub.test` |
+
+Each named company starts with five jobs (three active, one draft and one closed) and five applications. Each job seeker starts with five applications and three bookmarks. Applications include 13 accepted, six pending and six rejected examples, producing 44 history events.
+
+Six additional starter vacancies bring a fresh dataset to **31 jobs: 21 active, five draft and five closed**. If their earlier owner already exists, the loader reuses that owner without changing their credentials. Otherwise it creates a fictional `demo-company@careerhub.test` account, also with the demo password, to own those six jobs. A fresh dataset contains 11 accounts and 11 profiles.
+
+Run the loader again to restore missing examples without duplicating existing records. Existing passwords, profile edits and application status changes are preserved. Additional records created through the website remain intact, so totals can grow beyond the fresh-dataset counts. The `.test` addresses are sample login identifiers; email delivery is not configured for them.
+
+Start the backend on `http://127.0.0.1:8000` and the frontend on `http://localhost:3000` using the commands above. Sign in as a company to review applicants, or as a job seeker to view applications and saved jobs.
+
+## SQL presentation
+
+Open a MySQL/MariaDB client from the `backend` directory. Select the presentation database, then run:
+
+```sql
+USE careerhub_presentation_2026;
+SOURCE database/sql/presentation_demo_careerhub.sql;
+```
+
+This reads the named company/user examples through all six functions and three cursor reports, and displays their application history. It looks up IDs by email rather than assuming IDs start at 1. On a fresh dataset the function values are `5, 3, 5, 3, 5, 1`; the three cursor row counts are `5, 5, 2`.
+
+For the independent procedure, trigger, function and cursor demonstrations:
+
+```sql
+SOURCE database/sql/transaction_demo_careerhub.sql;
+SOURCE database/sql/trigger_demo_careerhub.sql;
+SOURCE database/sql/function_demo_careerhub.sql;
+SOURCE database/sql/cursor_demo_careerhub.sql;
+SOURCE database/sql/verify_careerhub.sql;
+```
+
+Run these on a dedicated SQL connection with no unfinished transaction. Each of the four demos creates its own sample records and rolls them back; the persistent presentation accounts and jobs remain. If an interactive demo statement fails, run `ROLLBACK;` before continuing. Auto-increment values can advance even when rows are rolled back.
+
+The procedure demo shows one job, application and bookmark before rollback and zero remaining fixture rows afterward. The trigger demo shows `NULL -> pending` and `pending -> accepted`, with no extra event for an unchanged status. The function demo returns `3, 2, 2, 1, 3, 2`. The cursor demo includes one-row pagination ending with an empty page. Every integrity violation count from the final verification script should be zero.
+
+The SQL files above are MySQL/MariaDB client commands, not PowerShell commands. They can also be opened as SQL scripts in a graphical database client. Cursor reports are backend/SQL features; there is no additional cursor-report website page.
+
 ## API overview
 
 Registration, login, job browsing, and job details are public. The remaining `/api` endpoints below require an authenticated session; role and ownership checks apply to protected actions.
