@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('profiles', function (Blueprint $table) {
             $table->dropColumn([
-                'resume-path',
+                'resume_path',
                 'resume_original_name',
             ]);
         });

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\JobListing;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 
 class UpdateJobListingRequest extends FormRequest
@@ -17,7 +18,7 @@ class UpdateJobListingRequest extends FormRequest
         return true;
     }
 
-    
+
     protected function failedAuthorization()
 {
     $message = $this->user()?->role !== 'company'
@@ -27,7 +28,7 @@ class UpdateJobListingRequest extends FormRequest
     throw new AuthorizationException($message);
 }
 
-   
+
     public function rules(): array
     {
         return [
@@ -36,7 +37,7 @@ class UpdateJobListingRequest extends FormRequest
             'location' => 'required|string|max:255',
             'type' => 'required|in:Full-Time,Part-Time,Internship,Contract',
             'salary_min' => 'nullable|integer|min:0',
-            'salary_max' => 'nullable|integer|min:0|gte:salary_min',
+            'salary_max' => ['nullable', 'integer', 'min:0', Rule::when($this->filled('salary_min'), 'gte:salary_min')],
             'currency' => 'required|string|size:3',
             'status' => 'required|in:active,draft,closed',
         ];
