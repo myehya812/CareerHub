@@ -1,0 +1,230 @@
+{
+  "companies": [
+    {
+      "name": "company1",
+      "email": "company1@careerhub.test",
+      "company_name": "Company 1",
+      "location": "Beirut",
+      "skills": [
+        "PHP",
+        "Laravel",
+        "MySQL"
+      ],
+      "job_titles": [
+        "Laravel Backend Developer",
+        "Junior PHP Developer",
+        "API Integration Engineer",
+        "Backend Team Lead",
+        "SQL Support Engineer"
+      ]
+    },
+    {
+      "name": "company2",
+      "email": "company2@careerhub.test",
+      "company_name": "Company 2",
+      "location": "Tripoli",
+      "skills": [
+        "Vue.js",
+        "JavaScript",
+        "Tailwind CSS"
+      ],
+      "job_titles": [
+        "Vue.js Frontend Developer",
+        "UI Developer",
+        "Junior JavaScript Developer",
+        "Frontend Team Lead",
+        "Website Maintenance Developer"
+      ]
+    },
+    {
+      "name": "company3",
+      "email": "company3@careerhub.test",
+      "company_name": "Company 3",
+      "location": "Jounieh",
+      "skills": [
+        "SQL",
+        "Excel",
+        "Data Analysis"
+      ],
+      "job_titles": [
+        "Data Analyst",
+        "Database Developer",
+        "SQL Reporting Analyst",
+        "Data Architect",
+        "Data Entry Analyst"
+      ]
+    },
+    {
+      "name": "company4",
+      "email": "company4@careerhub.test",
+      "company_name": "Company 4",
+      "location": "Remote",
+      "skills": [
+        "Testing",
+        "API Testing",
+        "Quality Assurance"
+      ],
+      "job_titles": [
+        "QA Tester",
+        "Automation Engineer",
+        "Technical Support Specialist",
+        "Quality Assurance Lead",
+        "Software Test Intern"
+      ]
+    },
+    {
+      "name": "company5",
+      "email": "company5@careerhub.test",
+      "company_name": "Company 5",
+      "location": "Beirut",
+      "skills": [
+        "Linux",
+        "Git",
+        "Web Development"
+      ],
+      "job_titles": [
+        "Full Stack Developer",
+        "DevOps Assistant",
+        "IT Support Intern",
+        "Cloud Engineer",
+        "Web Developer"
+      ]
+    }
+  ],
+  "job_seekers": [
+    {
+      "name": "user1",
+      "email": "user1@careerhub.test",
+      "location": "Beirut",
+      "skills": [
+        "PHP",
+        "Laravel",
+        "MySQL"
+      ],
+      "headline": "Laravel Backend Developer"
+    },
+    {
+      "name": "user2",
+      "email": "user2@careerhub.test",
+      "location": "Tripoli",
+      "skills": [
+        "Vue.js",
+        "JavaScript",
+        "Tailwind CSS"
+      ],
+      "headline": "Vue.js Frontend Developer"
+    },
+    {
+      "name": "user3",
+      "email": "user3@careerhub.test",
+      "location": "Jounieh",
+      "skills": [
+        "SQL",
+        "Excel",
+        "Data Analysis"
+      ],
+      "headline": "Data Analyst"
+    },
+    {
+      "name": "user4",
+      "email": "user4@careerhub.test",
+      "location": "Remote",
+      "skills": [
+        "Testing",
+        "API Testing",
+        "Quality Assurance"
+      ],
+      "headline": "QA Tester"
+    },
+    {
+      "name": "user5",
+      "email": "user5@careerhub.test",
+      "location": "Beirut",
+      "skills": [
+        "Linux",
+        "Git",
+        "Web Development"
+      ],
+      "headline": "Full Stack Developer"
+    }
+  ],
+  "job_types": [
+    "Full-Time",
+    "Contract",
+    "Internship",
+    "Full-Time",
+    "Part-Time"
+  ],
+  "salary_ranges": [
+    [
+      1200,
+      2200
+    ],
+    [
+      1000,
+      1800
+    ],
+    [
+      500,
+      900
+    ],
+    [
+      2000,
+      3200
+    ],
+    [
+      800,
+      1400
+    ]
+  ],
+  "starter_jobs": [
+    {
+      "title": "Laravel Backend Developer",
+      "description": "Build and maintain Laravel APIs and MySQL database features. Sample vacancy for the CareerHub presentation.",
+      "location": "Beirut",
+      "type": "Full-Time",
+      "salary_min": 1500,
+      "salary_max": 2500
+    },
+    {
+      "title": "Vue.js Frontend Developer",
+      "description": "Build responsive Vue interfaces and connect them to Laravel APIs. Sample vacancy for the CareerHub presentation.",
+      "location": "Remote",
+      "type": "Full-Time",
+      "salary_min": 1200,
+      "salary_max": 2200
+    },
+    {
+      "title": "Full Stack Developer",
+      "description": "Develop Vue pages, Laravel endpoints and database integrations. Sample vacancy for the CareerHub presentation.",
+      "location": "Beirut",
+      "type": "Contract",
+      "salary_min": 1800,
+      "salary_max": 3000
+    },
+    {
+      "title": "Junior Data Analyst",
+      "description": "Prepare SQL reports and analyze recruitment data. Sample vacancy for the CareerHub presentation.",
+      "location": "Tripoli",
+      "type": "Full-Time",
+      "salary_min": 900,
+      "salary_max": 1500
+    },
+    {
+      "title": "QA Tester",
+      "description": "Test web workflows, validate API behavior and report reproducible bugs. Sample vacancy for the CareerHub presentation.",
+      "location": "Jounieh",
+      "type": "Part-Time",
+      "salary_min": 800,
+      "salary_max": 1400
+    },
+    {
+      "title": "IT Support Intern",
+      "description": "Assist with software setup and basic technical support. Sample vacancy for the CareerHub presentation.",
+      "location": "Beirut",
+      "type": "Internship",
+      "salary_min": 400,
+      "salary_max": 700
+    }
+  ]
+}
