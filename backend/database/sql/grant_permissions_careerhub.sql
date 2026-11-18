@@ -1,0 +1,50 @@
+-- CareerHub database access, 17 November 2026.
+-- Grants only: review existing account identities before applying.
+-- Apply as an administrator after migrations, using a batch client that stops on errors.
+-- Account/grant DDL is not transactional. Grants are additive.
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX, REFERENCES, CREATE ROUTINE, ALTER ROUTINE, EXECUTE, TRIGGER ON `careerhub`.* TO 'careerhub_migrate'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`users` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`profiles` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`job_listings` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`applications` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`saved_jobs` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`personal_access_tokens` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`password_reset_tokens` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`sessions` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`cache` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`cache_locks` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`jobs` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`job_batches` TO 'careerhub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `careerhub`.`failed_jobs` TO 'careerhub_app'@'localhost';
+GRANT SELECT ON `careerhub`.`application_status_history` TO 'careerhub_app'@'localhost';
+GRANT SELECT (id, name, role) ON `careerhub`.`users` TO 'careerhub_report'@'localhost';
+GRANT SELECT (user_id, company_name) ON `careerhub`.`profiles` TO 'careerhub_report'@'localhost';
+GRANT SELECT ON `careerhub`.`job_listings` TO 'careerhub_report'@'localhost';
+GRANT SELECT ON `careerhub`.`applications` TO 'careerhub_report'@'localhost';
+GRANT SELECT ON `careerhub`.`saved_jobs` TO 'careerhub_report'@'localhost';
+GRANT SELECT ON `careerhub`.`application_status_history` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_require_transaction` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_create_job` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_submit_application` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_update_application_status` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_save_job` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_remove_saved_job` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_delete_job` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_cursor_company_jobs` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_cursor_company_jobs` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_cursor_user_applications` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_cursor_user_applications` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_cursor_application_history` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON PROCEDURE `careerhub`.`ch_cursor_application_history` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_user_application_count` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_user_application_count` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_user_saved_job_count` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_user_saved_job_count` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_company_job_count` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_company_job_count` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_company_active_job_count` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_company_active_job_count` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_company_application_count` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_company_application_count` TO 'careerhub_report'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_job_application_count` TO 'careerhub_app'@'localhost';
+GRANT EXECUTE ON FUNCTION `careerhub`.`ch_job_application_count` TO 'careerhub_report'@'localhost';

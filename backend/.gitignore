@@ -21,3 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+# Generated administrator scripts contain credentials and must stay local.
+/database-access*.sql
+/database/sql/*private*.sql
