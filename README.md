@@ -82,6 +82,7 @@ The Vue frontend sends requests to the Laravel API. During local development, Vi
 | User → Applications | Associate job seekers with submitted applications |
 | Job listing → Applications | Associate each application with its target job |
 | User → Profile | Store profile information and résumé metadata |
+| Application → Status history | Automatically record creation and actual status changes in the database |
 
 ### Repository layout
 
@@ -145,11 +146,19 @@ SANCTUM_STATEFUL_DOMAINS=localhost:3000,127.0.0.1:3000
 
 The username and password above are placeholders. Replace them with your own local values.
 
-Apply the migrations and start the backend:
+Use a database account with schema and routine installation permissions while applying migrations. The backend includes `careerhub:database-access` to generate SQL for separate application, reporting and migration accounts. Run `php artisan help careerhub:database-access` for its options. Apply generated account and grant SQL as your setup administrator, and use the application account when running the website.
+
+Apply the initial migrations:
 
 ```bash
 php artisan config:clear
 php artisan migrate
+```
+
+After provisioning the accounts and switching `.env` to `careerhub_app`, start the backend:
+
+```bash
+php artisan config:clear
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
@@ -211,6 +220,8 @@ Job discovery accepts `search`, `location`, `type`, `sort`, and `page` query par
 
 ## Development checks
 
+The backend includes database integrity rules, transactional procedures, automatic application history, reporting functions and cursor reports. Executable SQL definitions, demonstrations and integrity checks are in `backend/database/sql`.
+
 Build the frontend:
 
 ```bash
@@ -225,7 +236,8 @@ cd backend
 php artisan test
 ```
 
-The current backend tests are Laravel starter examples. They do not yet validate the recruitment workflows or access-control behavior.
+The backend suite includes database integrity and recruitment workflow tests.
+By default it uses in-memory SQLite. Native MySQL/MariaDB tests require an isolated database whose name ends in `_testing`.
 
 ## What I learned
 
@@ -241,4 +253,3 @@ The current backend tests are Laravel starter examples. They do not yet validate
 **Mohammad Hussein Yehya**
 
 [GitHub](https://github.com/myehya812) · [LinkedIn](https://www.linkedin.com/in/mohammad-hussein-yehya)
-
