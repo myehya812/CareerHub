@@ -22,4 +22,9 @@ class Application extends Model
     {
         return $this->belongsTo(JobListing::class);
     }
+
+    public function statusHistory(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ApplicationStatusHistory::class)->orderBy('id');
+    }
 }
