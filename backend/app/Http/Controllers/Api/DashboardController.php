@@ -7,11 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Http\Resources\JobSeekerDashboardResource;
 use App\Http\Resources\CompanyDashboardResource;
+use App\Services\RecruitmentStatistics;
 
 
 class DashboardController extends Controller
 {
-    public function jobSeeker(Request $request)
+    public function jobSeeker(Request $request, RecruitmentStatistics $statistics)
     {
 
         $user = $request->user();
@@ -38,17 +39,14 @@ class DashboardController extends Controller
 
 
         return new JobSeekerDashboardResource([
-            'stats' => [
-                'total_applications' => $user->applications()->count(),
-                'saved_jobs' => $user->savedJobs()->count(),
-            ],
+            'stats' => $statistics->forJobSeeker($user),
 
             'recent_applications' => $recentApplications,
             'recent_saved_jobs' => $recentSavedJobs,
         ]);
     }
 
-    public function company(Request $request)
+    public function company(Request $request, RecruitmentStatistics $statistics)
     {
         $user = $request->user();
 
@@ -57,16 +55,6 @@ class DashboardController extends Controller
                 'message' => 'Only companies can access this dashboard.',
             ], 403);
         }
-
-        $totalJobs = $user->jobListings()->count();
-
-        $totalApplications  = Application::whereHas(
-            'jobListing',
-
-            function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }
-        )->count();
 
         $recentJobs = $user->jobListings()
             ->withCount('applications')
@@ -84,10 +72,7 @@ class DashboardController extends Controller
         )->with(['user:id,name', 'jobListing:id,title'])->latest()->limit(5)->get();
 
         return new CompanyDashboardResource([
-            'stats' => [
-                'total_jobs' => $totalJobs,
-                'total_applications' => $totalApplications,
-            ],
+            'stats' => $statistics->forCompany($user),
             'recent_jobs' => $recentJobs,
             'recent_applications' => $recentApplications,
         ]);
